@@ -250,6 +250,260 @@
   "vistas": {
     "customViews": [
       {
+        "id": "c0nte770-1111-4aaa-8aaa-000000000010",
+        "name": "Vista contexto",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "Vista contexto",
+          "version": "1.1.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-11-06",
+          "big_picture": {
+            "descripcion": "Contexto de la plataforma de teleconsultas de especialidad de RedSalud Andina (14 centros rurales, 9 especialistas itinerantes).",
+            "hotspots": [
+              "Confirmar el país y que Chime SDK tenga región de medios ahí. Si no la tiene, la videoconsulta no sale a producción.",
+              "Confirmar con la norma sanitaria el valor legal de la firma de la receta."
+            ],
+            "nodos": [
+              {
+                "id": "paciente",
+                "nombre": "Paciente",
+                "tipo_elemento": "Persona",
+                "descripcion": "Recibe la teleconsulta en el centro rural, sin viajar a la capital.",
+                "fuente": "Caso de uso del taller.pdf:2,3,14",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": null,
+                "x": 40,
+                "y": 300,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "medico-rural",
+                "nombre": "Médico rural",
+                "tipo_elemento": "Persona",
+                "descripcion": "Reserva cupos, adjunta exámenes y sigue registrando si se cae el enlace.",
+                "fuente": "Caso de uso del taller.pdf:13,15,20",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": null,
+                "x": 300,
+                "y": 30,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "especialista",
+                "nombre": "Especialista",
+                "tipo_elemento": "Persona",
+                "descripcion": "Atiende por video, consulta el historial y firma la receta.",
+                "fuente": "Caso de uso del taller.pdf:4,14,16,17",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": null,
+                "x": 1040,
+                "y": 250,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "gestor-red",
+                "nombre": "Gestor de red",
+                "tipo_elemento": "Persona",
+                "descripcion": "Sigue las interconsultas pendientes y los indicadores de atención.",
+                "fuente": "Caso de uso del taller.pdf:18,21",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": null,
+                "x": 40,
+                "y": 80,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "auditor",
+                "nombre": "Auditor",
+                "tipo_elemento": "Persona",
+                "descripcion": "Revisa quién accedió a cada documento clínico.",
+                "fuente": "Caso de uso del taller.pdf:19,38",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": null,
+                "x": 620,
+                "y": 30,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "legado-clinico",
+                "nombre": "Legado clínico",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Sistema clínico existente. API SOAP nocturna y base de solo lectura.",
+                "fuente": "Caso de uso del taller.pdf:3,7,17",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": [
+                  "SOAP"
+                ],
+                "x": 300,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "chime-sdk",
+                "nombre": "Amazon Chime SDK",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Audio y video de la teleconsulta, sin servidor de video propio.",
+                "fuente": "Caso de uso del taller.pdf:14,27",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Amazon Chime SDK",
+                  "WebRTC"
+                ],
+                "x": 580,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "farmacia-centro",
+                "nombre": "Farmacia del centro",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Consulta la receta electrónica firmada por el especialista.",
+                "fuente": "Caso de uso del taller.pdf:16,50",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": null,
+                "x": 1040,
+                "y": 80,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "cognito",
+                "nombre": "Amazon Cognito",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Identidad de los cinco roles, con MFA.",
+                "fuente": "Caso de uso del taller.pdf:12,28,50",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Amazon Cognito"
+                ],
+                "x": 860,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              }
+            ],
+            "aristas": [
+              {
+                "fuente": "paciente",
+                "destino": "plataforma",
+                "descripcion": "se atiende por video [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "medico-rural",
+                "destino": "plataforma",
+                "descripcion": "agenda y registra [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "especialista",
+                "destino": "plataforma",
+                "descripcion": "atiende y receta [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "gestor-red",
+                "destino": "plataforma",
+                "descripcion": "sigue y reporta [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "auditor",
+                "destino": "plataforma",
+                "descripcion": "consulta accesos [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "plataforma",
+                "destino": "legado-clinico",
+                "descripcion": "copia historial [SOAP/SQL]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "plataforma",
+                "destino": "chime-sdk",
+                "descripcion": "crea salas [HTTPS/WebRTC]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "plataforma",
+                "destino": "farmacia-centro",
+                "descripcion": "deja la receta firmada para consulta [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "plataforma",
+                "destino": "cognito",
+                "descripcion": "autentica [OIDC]",
+                "routing": "orthogonal"
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "Límite RedSalud Andina",
+              "entidad_raiz": "Límite RedSalud Andina",
+              "descripcion": "Límite RedSalud Andina",
+              "nodos": [
+                {
+                  "id": "plataforma",
+                  "nombre": "RedSalud Andina",
+                  "tipo_elemento": "Sistema",
+                  "descripcion": "Plataforma de telemedicina. Agenda, videoconsulta, receta y auditoría.",
+                  "fuente": "Caso de uso del taller.pdf:4,6,8",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "AWS"
+                  ],
+                  "icono": "dv-amazonwebservices",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "viewRef": "ebed0005-9136-44d7-a3fa-fd1091f320d0",
+                  "x": 500,
+                  "y": 360,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 280,
+              "y": 200,
+              "width": 700,
+              "height": 400,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [
+            "Juan Camilo Martínez"
+          ],
+          "notas": "Versión 1.1. Completa las vistas lógica, física y de despliegue, cierra el canal de la farmacia y la política de conflictos de la cola offline.\n\n## Decisiones\n- Monolito modular. Se extraen solo el video (Chime SDK) y la auditoría (SQS + S3 Object Lock).\n- El historial del legado se copia cada noche a una vista de lectura. Atraso de hasta un día, visible en pantalla.\n- PWA con cola cifrada en IndexedDB. Resultados: applied, duplicate o conflict. No gana el último en escribir.\n- Una sola región AWS dentro del país. La lectura clínica no se entrega si el evento de auditoría no quedó en la cola.\n- ECS Fargate Multi-AZ, Aurora PostgreSQL, Cognito, KMS, Athena.\n- La farmacia consulta el documento firmado. No hay webhook porque el caso no describe su sistema.\n",
+          "transcript": ""
+        },
+        "createdAt": "2026-11-07T14:20:00.000Z"
+      },
+      {
         "id": "ebed0005-9136-44d7-a3fa-fd1091f320d0",
         "name": "C4 L2 Contenedores",
         "kind": "graph",
@@ -2635,9 +2889,10 @@
         "createdAt": "2026-11-06T20:00:00.000Z"
       }
     ],
-    "activeViewId": "design",
+    "activeViewId": "c0nte770-1111-4aaa-8aaa-000000000010",
     "injectedViewIds": [],
     "openViewIds": [
+      "c0nte770-1111-4aaa-8aaa-000000000010",
       "bdd9d689-4cce-4081-9590-82e277fa10b5",
       "ebed0005-9136-44d7-a3fa-fd1091f320d0",
       "a1b2c3d4-2222-4aaa-8aaa-000000000002",
