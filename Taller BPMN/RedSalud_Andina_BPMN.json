@@ -1,0 +1,1078 @@
+{
+  "nombre_proyecto": "RedSalud Andina · BPMN corregido · Seguimiento conectado",
+  "version": "1.1.0",
+  "notation": "bpmn",
+  "defaultRouting": "orthogonal",
+  "fecha_analisis": "2026-11-07",
+  "big_picture": {
+    "descripcion": "Proceso de atención de una interconsulta por teleconsulta y sincronización nocturna del legado.",
+    "hotspots": [],
+    "nodos": [],
+    "aristas": []
+  },
+  "agregados": [
+    {
+      "nombre_agregado": "Médico rural",
+      "entidad_raiz": "Médico rural",
+      "descripcion": "",
+      "nodos": [
+        {
+          "id": "mr-inicio",
+          "nombre": "Paciente necesita especialista",
+          "tipo_elemento": "Evento de Inicio",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 180,
+          "y": 110,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "mr-registrar",
+          "nombre": "Registrar interconsulta",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-07.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 400,
+          "y": 88,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "mr-gw-enlace",
+          "nombre": "¿Hay enlace?",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 680,
+          "y": 110,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "mr-local",
+          "nombre": "Guardar en modo local",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-09: registro local con cola de eventos.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 900,
+          "y": 238,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "mr-enlace-ok",
+          "nombre": "Enlace restablecido",
+          "tipo_elemento": "Evento Intermedio",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1180,
+          "y": 260,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "mr-reservar",
+          "nombre": "Reservar cupo en la agenda",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-02: agenda unificada de los 9 especialistas.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1900,
+          "y": 88,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "mr-gw-cupo",
+          "nombre": "¿Cupo disponible?",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 2180,
+          "y": 110,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "mr-adjuntar",
+          "nombre": "Adjuntar exámenes",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-04: exámenes e imágenes al episodio.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 2650,
+          "y": 88,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "mr-seguimiento",
+          "nombre": "Contactar paciente y gestionar pendiente",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Acción de seguimiento indicada por gestor; no crea nueva interconsulta.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1200,
+          "y": 238,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "mr-inicio",
+          "destino": "mr-registrar",
+          "descripcion": ""
+        },
+        {
+          "fuente": "mr-registrar",
+          "destino": "mr-gw-enlace",
+          "descripcion": ""
+        },
+        {
+          "fuente": "mr-gw-enlace",
+          "destino": "mr-local",
+          "descripcion": "No"
+        },
+        {
+          "fuente": "mr-local",
+          "destino": "mr-enlace-ok",
+          "descripcion": ""
+        },
+        {
+          "fuente": "mr-reservar",
+          "destino": "mr-gw-cupo",
+          "descripcion": ""
+        },
+        {
+          "fuente": "mr-gw-cupo",
+          "destino": "mr-reservar",
+          "descripcion": "No: elegir otro cupo"
+        }
+      ],
+      "x": 40,
+      "y": 40,
+      "width": 6920,
+      "height": 360,
+      "tipo_contenedor": "Carril",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Plataforma RedSalud",
+      "entidad_raiz": "Plataforma RedSalud",
+      "descripcion": "",
+      "nodos": [
+        {
+          "id": "pl-sincronizar",
+          "nombre": "Sincronizar registros",
+          "tipo_elemento": "Tarea",
+          "descripcion": "API idempotente; ≤ 15 min tras reconexión.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1400,
+          "y": 598,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-solicitada",
+          "nombre": "Guardar como SOLICITADA",
+          "tipo_elemento": "Tarea",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1650,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-agendada",
+          "nombre": "Marcar AGENDADA y notificar",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Notifica al paciente y al especialista.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 2400,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-rol",
+          "nombre": "Verificar rol del usuario",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Autorización por rol y atributo.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 3400,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-gw-rol",
+          "nombre": "¿Rol autorizado?",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 3680,
+          "y": 470,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "pl-denegar",
+          "nombre": "Denegar y auditar intento",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-08: denegación 100 % + registro.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 3900,
+          "y": 598,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-fin-denegado",
+          "nombre": "Fin (acceso denegado)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4180,
+          "y": 620,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "pl-leer",
+          "nombre": "Leer historial y auditar",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Vista en caché (p95 ≤ 2 s) y registro de auditoría (RF-06, RF-08).",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 3900,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-sala",
+          "nombre": "Abrir sala de video",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Pasarela WebRTC gestionada.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4150,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-enviar",
+          "nombre": "Enviar receta a farmacia",
+          "tipo_elemento": "Tarea",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 5150,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-paralelo",
+          "nombre": "Receta enviada",
+          "tipo_elemento": "Compuerta Paralela",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 5430,
+          "y": 470,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "pl-atendida",
+          "nombre": "Registrar asistencia",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Marca la interconsulta como ATENDIDA.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 5900,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-indicadores",
+          "nombre": "Actualizar indicadores",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-10.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 6400,
+          "y": 448,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "pl-fin",
+          "nombre": "Fin (interconsulta cerrada)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 6680,
+          "y": 470,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "pl-tablero",
+          "nombre": "Tablero de interconsultas pendientes",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Consolida solicitudes sin avance para seguimiento diario (RF-07, RF-10).",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 700,
+          "y": 630,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "pl-sincronizar",
+          "destino": "pl-solicitada",
+          "descripcion": ""
+        },
+        {
+          "fuente": "pl-rol",
+          "destino": "pl-gw-rol",
+          "descripcion": ""
+        },
+        {
+          "fuente": "pl-gw-rol",
+          "destino": "pl-denegar",
+          "descripcion": "No"
+        },
+        {
+          "fuente": "pl-denegar",
+          "destino": "pl-fin-denegado",
+          "descripcion": ""
+        },
+        {
+          "fuente": "pl-gw-rol",
+          "destino": "pl-leer",
+          "descripcion": "Sí"
+        },
+        {
+          "fuente": "pl-leer",
+          "destino": "pl-sala",
+          "descripcion": ""
+        },
+        {
+          "fuente": "pl-enviar",
+          "destino": "pl-paralelo",
+          "descripcion": ""
+        },
+        {
+          "fuente": "pl-indicadores",
+          "destino": "pl-fin",
+          "descripcion": ""
+        }
+      ],
+      "x": 40,
+      "y": 400,
+      "width": 6920,
+      "height": 360,
+      "tipo_contenedor": "Carril",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Gestor de red",
+      "entidad_raiz": "Gestor de red",
+      "descripcion": "",
+      "nodos": [
+        {
+          "id": "gr-timer",
+          "nombre": "Cada mañana",
+          "tipo_elemento": "Evento Temporizador",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 180,
+          "y": 830,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "gr-revisar",
+          "nombre": "Revisar pendientes",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Alertas de interconsultas sin avance e indicadores (RF-07, RF-10).",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 400,
+          "y": 808,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "gr-fin",
+          "nombre": "Fin (seguimiento hecho)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1770,
+          "y": 830,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "gr-gw-pendientes",
+          "nombre": "¿Hay consultas atrasadas?",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "Revisar solicitudes sin avance (RF-07).",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 920,
+          "y": 830,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "gr-solicitar",
+          "nombre": "Solicitar seguimiento al médico rural",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Gestor asigna acción de seguimiento al centro responsable.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1200,
+          "y": 790,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "gr-registrar",
+          "nombre": "Registrar gestión de seguimiento",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Dejar constancia del seguimiento y su estado.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1480,
+          "y": 790,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "gr-timer",
+          "destino": "gr-revisar",
+          "descripcion": ""
+        },
+        {
+          "fuente": "gr-revisar",
+          "destino": "gr-gw-pendientes",
+          "descripcion": ""
+        },
+        {
+          "fuente": "gr-gw-pendientes",
+          "destino": "gr-fin",
+          "descripcion": "No"
+        },
+        {
+          "fuente": "gr-gw-pendientes",
+          "destino": "gr-solicitar",
+          "descripcion": "Sí"
+        },
+        {
+          "fuente": "gr-solicitar",
+          "destino": "gr-registrar",
+          "descripcion": ""
+        },
+        {
+          "fuente": "gr-registrar",
+          "destino": "gr-fin",
+          "descripcion": ""
+        }
+      ],
+      "x": 40,
+      "y": 760,
+      "width": 6920,
+      "height": 270,
+      "tipo_contenedor": "Carril",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Paciente",
+      "entidad_raiz": "Paciente",
+      "descripcion": "",
+      "nodos": [
+        {
+          "id": "pa-sala",
+          "nombre": "Ingresar a sala de espera",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-03.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 2900,
+          "y": 1018,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [],
+      "x": 40,
+      "y": 1030,
+      "width": 6920,
+      "height": 210,
+      "tipo_contenedor": "Carril",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Especialista",
+      "entidad_raiz": "Especialista",
+      "descripcion": "",
+      "nodos": [
+        {
+          "id": "es-historial",
+          "nombre": "Solicitar historial clínico",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-06.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 3150,
+          "y": 1228,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "es-video",
+          "nombre": "Atender videoconsulta",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-03: admisión y registro de asistencia.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4400,
+          "y": 1228,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "es-error",
+          "nombre": "Conexión caída",
+          "tipo_elemento": "Evento de Error",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4430,
+          "y": 1400,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "es-reprogramar",
+          "nombre": "Registrar local y reprogramar",
+          "tipo_elemento": "Tarea",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4650,
+          "y": 1378,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "es-fin-reprog",
+          "nombre": "Fin (reprogramada)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4930,
+          "y": 1400,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "es-gw-med",
+          "nombre": "¿Requiere medicamento?",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4680,
+          "y": 1250,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "es-receta",
+          "nombre": "Emitir y firmar receta",
+          "tipo_elemento": "Tarea",
+          "descripcion": "RF-05.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 4900,
+          "y": 1228,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "es-gw-union",
+          "nombre": "Unir caminos",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 5680,
+          "y": 1250,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "es-cerrar",
+          "nombre": "Cerrar interconsulta",
+          "tipo_elemento": "Tarea",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 6150,
+          "y": 1228,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "es-video",
+          "destino": "es-error",
+          "descripcion": "si cae la conexión",
+          "dashed": true
+        },
+        {
+          "fuente": "es-error",
+          "destino": "es-reprogramar",
+          "descripcion": ""
+        },
+        {
+          "fuente": "es-reprogramar",
+          "destino": "es-fin-reprog",
+          "descripcion": ""
+        },
+        {
+          "fuente": "es-video",
+          "destino": "es-gw-med",
+          "descripcion": ""
+        },
+        {
+          "fuente": "es-gw-med",
+          "destino": "es-receta",
+          "descripcion": "Sí"
+        },
+        {
+          "fuente": "es-gw-med",
+          "destino": "es-gw-union",
+          "descripcion": "No"
+        }
+      ],
+      "x": 40,
+      "y": 1240,
+      "width": 6920,
+      "height": 510,
+      "tipo_contenedor": "Carril",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Farmacia del centro",
+      "entidad_raiz": "Farmacia del centro",
+      "descripcion": "",
+      "nodos": [
+        {
+          "id": "fa-dispensar",
+          "nombre": "Recibir y dispensar receta",
+          "tipo_elemento": "Tarea",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 5650,
+          "y": 1738,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "fa-fin",
+          "nombre": "Fin (receta dispensada)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 5930,
+          "y": 1760,
+          "width": 160,
+          "height": 60
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "fa-dispensar",
+          "destino": "fa-fin",
+          "descripcion": ""
+        }
+      ],
+      "x": 40,
+      "y": 1750,
+      "width": 6920,
+      "height": 210,
+      "tipo_contenedor": "Carril",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Sincronización nocturna",
+      "entidad_raiz": "Adaptador anticorrupción: lleva el historial del legado a la vista de lectura.",
+      "descripcion": "Adaptador anticorrupción: lleva el historial del legado a la vista de lectura.",
+      "nodos": [
+        {
+          "id": "sn-timer",
+          "nombre": "Cada noche 02:00",
+          "tipo_elemento": "Evento Temporizador",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 180,
+          "y": 2060,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "sn-pedir",
+          "nombre": "Pedir historias por SOAP",
+          "tipo_elemento": "Tarea",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 400,
+          "y": 2038,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "sn-gw",
+          "nombre": "¿Respondió a tiempo?",
+          "tipo_elemento": "Compuerta Exclusiva",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 930,
+          "y": 2060,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "sn-traducir",
+          "nombre": "Traducir al modelo propio",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Capa anticorrupción.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1150,
+          "y": 2038,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "sn-actualizar",
+          "nombre": "Actualizar vista de lectura",
+          "tipo_elemento": "Tarea",
+          "descripcion": "CQRS: caché del historial.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1400,
+          "y": 2038,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "sn-fin",
+          "nombre": "Fin (historial al día)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1680,
+          "y": 2060,
+          "width": 160,
+          "height": 60
+        },
+        {
+          "id": "sn-reintentar",
+          "nombre": "Reintentar y alertar",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Se avisa a operaciones.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1150,
+          "y": 2188,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "sn-fin-ayer",
+          "nombre": "Fin (vista del día anterior)",
+          "tipo_elemento": "Evento de Fin",
+          "descripcion": "",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1430,
+          "y": 2210,
+          "width": 160,
+          "height": 60
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "sn-timer",
+          "destino": "sn-pedir",
+          "descripcion": ""
+        },
+        {
+          "fuente": "sn-gw",
+          "destino": "sn-traducir",
+          "descripcion": "Sí"
+        },
+        {
+          "fuente": "sn-traducir",
+          "destino": "sn-actualizar",
+          "descripcion": ""
+        },
+        {
+          "fuente": "sn-actualizar",
+          "destino": "sn-fin",
+          "descripcion": ""
+        },
+        {
+          "fuente": "sn-gw",
+          "destino": "sn-reintentar",
+          "descripcion": "No"
+        },
+        {
+          "fuente": "sn-reintentar",
+          "destino": "sn-fin-ayer",
+          "descripcion": ""
+        }
+      ],
+      "x": 40,
+      "y": 1980,
+      "width": 2170,
+      "height": 360,
+      "tipo_contenedor": "Pool",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Sistema legado clínico",
+      "entidad_raiz": "On-premise, solo lectura.",
+      "descripcion": "On-premise, solo lectura.",
+      "nodos": [
+        {
+          "id": "lg-entregar",
+          "nombre": "Entregar historias clínicas",
+          "tipo_elemento": "Tarea",
+          "descripcion": "API SOAP nocturna.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 2460,
+          "y": 2038,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [],
+      "x": 2260,
+      "y": 1980,
+      "width": 700,
+      "height": 360,
+      "tipo_contenedor": "Pool",
+      "estado_comparativo": "nuevo"
+    },
+    {
+      "nombre_agregado": "Pasarela de video",
+      "entidad_raiz": "WebRTC gestionado.",
+      "descripcion": "WebRTC gestionado.",
+      "nodos": [
+        {
+          "id": "vd-sala",
+          "nombre": "Transmitir audio y video",
+          "tipo_elemento": "Tarea",
+          "descripcion": "Latencia de señalización ≤ 300 ms.",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 3460,
+          "y": 2038,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [],
+      "x": 3260,
+      "y": 1980,
+      "width": 700,
+      "height": 360,
+      "tipo_contenedor": "Pool",
+      "estado_comparativo": "nuevo"
+    }
+  ],
+  "read_models": [],
+  "politicas_inter_agregados": [
+    {
+      "fuente": "mr-gw-enlace",
+      "destino": "pl-solicitada",
+      "descripcion": "Sí",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "mr-enlace-ok",
+      "destino": "pl-sincronizar",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-solicitada",
+      "destino": "mr-reservar",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "mr-gw-cupo",
+      "destino": "pl-agendada",
+      "descripcion": "Sí",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-agendada",
+      "destino": "mr-adjuntar",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "mr-adjuntar",
+      "destino": "pa-sala",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pa-sala",
+      "destino": "es-historial",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "es-historial",
+      "destino": "pl-rol",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-sala",
+      "destino": "es-video",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-sala",
+      "destino": "vd-sala",
+      "descripcion": "crea sala [WebRTC]",
+      "dashed": true,
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "es-receta",
+      "destino": "pl-enviar",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-paralelo",
+      "destino": "fa-dispensar",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-paralelo",
+      "destino": "es-gw-union",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "es-gw-union",
+      "destino": "pl-atendida",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-atendida",
+      "destino": "es-cerrar",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "es-cerrar",
+      "destino": "pl-indicadores",
+      "descripcion": "",
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "sn-pedir",
+      "destino": "lg-entregar",
+      "descripcion": "petición [SOAP]",
+      "dashed": true,
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "lg-entregar",
+      "destino": "sn-gw",
+      "descripcion": "historias clínicas",
+      "dashed": true,
+      "routing": "orthogonal"
+    },
+    {
+      "fuente": "pl-solicitada",
+      "destino": "pl-tablero",
+      "descripcion": "actualiza estado de solicitud",
+      "dashed": true
+    },
+    {
+      "fuente": "pl-tablero",
+      "destino": "gr-revisar",
+      "descripcion": "consulta estados pendientes · asociación de datos",
+      "dashed": true
+    },
+    {
+      "fuente": "gr-solicitar",
+      "destino": "mr-seguimiento",
+      "descripcion": "asignación de seguimiento · asociación informativa",
+      "dashed": true
+    },
+    {
+      "fuente": "mr-seguimiento",
+      "destino": "gr-registrar",
+      "descripcion": "resultado del seguimiento · asociación informativa",
+      "dashed": true
+    }
+  ],
+  "responsables": [],
+  "notas": "Caso de estudio RedSalud Andina — Diplomado de Arquitectura de Software. | Corrección: gestor enlazado por asociaciones informativas al tablero de plataforma y al médico rural; el temporizador inicia revisión diaria independiente. Flechas discontinuas entre carriles del mismo pool son asociaciones informativas, no flujos de mensaje BPMN.",
+  "transcript": ""
+}
