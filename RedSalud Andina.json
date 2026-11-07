@@ -1,0 +1,2647 @@
+{
+  "formato": "processflow-board/v1",
+  "proyecto": {
+    "nombre_proyecto": "RedSalud Andina",
+    "version": "1.1.0",
+    "notation": "c4",
+    "fecha_analisis": "2026-11-06",
+    "big_picture": {
+      "descripcion": "Contexto de la plataforma de teleconsultas de especialidad de RedSalud Andina (14 centros rurales, 9 especialistas itinerantes).",
+      "hotspots": [
+        "Confirmar el país y que Chime SDK tenga región de medios ahí. Si no la tiene, la videoconsulta no sale a producción.",
+        "Confirmar con la norma sanitaria el valor legal de la firma de la receta."
+      ],
+      "nodos": [
+        {
+          "id": "paciente",
+          "nombre": "Paciente",
+          "tipo_elemento": "Persona",
+          "descripcion": "Recibe la teleconsulta en el centro rural, sin viajar a la capital.",
+          "fuente": "Caso de uso del taller.pdf:2,3,14",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 40,
+          "y": 300,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "medico-rural",
+          "nombre": "Médico rural",
+          "tipo_elemento": "Persona",
+          "descripcion": "Reserva cupos, adjunta exámenes y sigue registrando si se cae el enlace.",
+          "fuente": "Caso de uso del taller.pdf:13,15,20",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 300,
+          "y": 30,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "especialista",
+          "nombre": "Especialista",
+          "tipo_elemento": "Persona",
+          "descripcion": "Atiende por video, consulta el historial y firma la receta.",
+          "fuente": "Caso de uso del taller.pdf:4,14,16,17",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 1040,
+          "y": 250,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "gestor-red",
+          "nombre": "Gestor de red",
+          "tipo_elemento": "Persona",
+          "descripcion": "Sigue las interconsultas pendientes y los indicadores de atención.",
+          "fuente": "Caso de uso del taller.pdf:18,21",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 40,
+          "y": 80,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "auditor",
+          "nombre": "Auditor",
+          "tipo_elemento": "Persona",
+          "descripcion": "Revisa quién accedió a cada documento clínico.",
+          "fuente": "Caso de uso del taller.pdf:19,38",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": null,
+          "x": 620,
+          "y": 30,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "legado-clinico",
+          "nombre": "Legado clínico",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Sistema clínico existente. API SOAP nocturna y base de solo lectura.",
+          "fuente": "Caso de uso del taller.pdf:3,7,17",
+          "estado_comparativo": "existente",
+          "tags_tecnologia": [
+            "SOAP"
+          ],
+          "x": 300,
+          "y": 700,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "chime-sdk",
+          "nombre": "Amazon Chime SDK",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Audio y video de la teleconsulta, sin servidor de video propio.",
+          "fuente": "Caso de uso del taller.pdf:14,27",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": [
+            "Amazon Chime SDK",
+            "WebRTC"
+          ],
+          "x": 580,
+          "y": 700,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "farmacia-centro",
+          "nombre": "Farmacia del centro",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Consulta la receta electrónica firmada por el especialista.",
+          "fuente": "Caso de uso del taller.pdf:16,50",
+          "estado_comparativo": "existente",
+          "tags_tecnologia": null,
+          "x": 1040,
+          "y": 80,
+          "width": 220,
+          "height": 104
+        },
+        {
+          "id": "cognito",
+          "nombre": "Amazon Cognito",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Identidad de los cinco roles, con MFA.",
+          "fuente": "Caso de uso del taller.pdf:12,28,50",
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": [
+            "Amazon Cognito"
+          ],
+          "x": 860,
+          "y": 700,
+          "width": 220,
+          "height": 104
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "paciente",
+          "destino": "plataforma",
+          "descripcion": "se atiende por video [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "medico-rural",
+          "destino": "plataforma",
+          "descripcion": "agenda y registra [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "especialista",
+          "destino": "plataforma",
+          "descripcion": "atiende y receta [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "gestor-red",
+          "destino": "plataforma",
+          "descripcion": "sigue y reporta [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "auditor",
+          "destino": "plataforma",
+          "descripcion": "consulta accesos [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "plataforma",
+          "destino": "legado-clinico",
+          "descripcion": "copia historial [SOAP/SQL]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "plataforma",
+          "destino": "chime-sdk",
+          "descripcion": "crea salas [HTTPS/WebRTC]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "plataforma",
+          "destino": "farmacia-centro",
+          "descripcion": "deja la receta firmada para consulta [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "plataforma",
+          "destino": "cognito",
+          "descripcion": "autentica [OIDC]",
+          "routing": "orthogonal"
+        }
+      ]
+    },
+    "agregados": [
+      {
+        "nombre_agregado": "Límite RedSalud Andina",
+        "entidad_raiz": "Límite RedSalud Andina",
+        "descripcion": "Límite RedSalud Andina",
+        "nodos": [
+          {
+            "id": "plataforma",
+            "nombre": "RedSalud Andina",
+            "tipo_elemento": "Sistema",
+            "descripcion": "Plataforma de telemedicina. Agenda, videoconsulta, receta y auditoría.",
+            "fuente": "Caso de uso del taller.pdf:4,6,8",
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "AWS"
+            ],
+            "icono": "dv-amazonwebservices",
+            "metadata": [
+              {
+                "clave": "repo",
+                "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                "tipo": "texto"
+              },
+              {
+                "clave": "puerto",
+                "valor": "443",
+                "tipo": "texto"
+              }
+            ],
+            "viewRef": "ebed0005-9136-44d7-a3fa-fd1091f320d0",
+            "x": 500,
+            "y": 360,
+            "width": 220,
+            "height": 104
+          }
+        ],
+        "aristas": [],
+        "x": 280,
+        "y": 200,
+        "width": 700,
+        "height": 400,
+        "tipo_contenedor": "Límite de Sistema",
+        "estado_comparativo": "nuevo"
+      }
+    ],
+    "read_models": [],
+    "politicas_inter_agregados": [],
+    "responsables": [
+      "Juan Camilo Martínez"
+    ],
+    "notas": "Versión 1.1. Completa las vistas lógica, física y de despliegue, cierra el canal de la farmacia y la política de conflictos de la cola offline.\n\n## Decisiones\n- Monolito modular. Se extraen solo el video (Chime SDK) y la auditoría (SQS + S3 Object Lock).\n- El historial del legado se copia cada noche a una vista de lectura. Atraso de hasta un día, visible en pantalla.\n- PWA con cola cifrada en IndexedDB. Resultados: applied, duplicate o conflict. No gana el último en escribir.\n- Una sola región AWS dentro del país. La lectura clínica no se entrega si el evento de auditoría no quedó en la cola.\n- ECS Fargate Multi-AZ, Aurora PostgreSQL, Cognito, KMS, Athena.\n- La farmacia consulta el documento firmado. No hay webhook porque el caso no describe su sistema.\n",
+    "transcript": ""
+  },
+  "vistas": {
+    "customViews": [
+      {
+        "id": "ebed0005-9136-44d7-a3fa-fd1091f320d0",
+        "name": "C4 L2 Contenedores",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · C4 L2 Contenedores",
+          "version": "1.0.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-10-31",
+          "big_picture": {
+            "descripcion": "Contenedores de la Plataforma Teleconsulta: PWA offline-first, monolito modular en ECS Fargate, servicio de auditoría extraído y almacenes en AWS.",
+            "hotspots": [],
+            "nodos": [
+              {
+                "id": "usuarios",
+                "nombre": "Usuarios de la red",
+                "tipo_elemento": "Persona",
+                "descripcion": "Paciente, médico rural, especialista, gestor de red y auditor.",
+                "fuente": "Caso de uso del taller.pdf:12",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": null,
+                "x": 500,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "legado-clinico",
+                "nombre": "Legado clínico",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Sistema clínico existente. API SOAP nocturna y base de solo lectura.",
+                "fuente": "Caso de uso del taller.pdf:3,7",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": [
+                  "SOAP"
+                ],
+                "x": 680,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "chime-sdk",
+                "nombre": "Amazon Chime SDK",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Audio y video de la teleconsulta, sin servidor de video propio.",
+                "fuente": "Caso de uso del taller.pdf:27",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Amazon Chime SDK",
+                  "WebRTC"
+                ],
+                "x": 380,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "farmacia-centro",
+                "nombre": "Farmacia del centro",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Consulta la receta electrónica firmada por el especialista.",
+                "fuente": "Caso de uso del taller.pdf:16",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": null,
+                "x": 980,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "cognito",
+                "nombre": "Amazon Cognito",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Identidad de los cinco roles, con MFA.",
+                "fuente": "Caso de uso del taller.pdf:12,28",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Amazon Cognito"
+                ],
+                "x": 80,
+                "y": 700,
+                "width": 220,
+                "height": 104
+              }
+            ],
+            "aristas": [
+              {
+                "fuente": "usuarios",
+                "destino": "pwa",
+                "descripcion": "usa [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "pwa",
+                "destino": "cognito",
+                "descripcion": "inicia sesión [OIDC]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "pwa",
+                "destino": "chime-sdk",
+                "descripcion": "audio y video [WebRTC]",
+                "routing": "orthogonal",
+                "geometriaAuto": true
+              },
+              {
+                "fuente": "api-monolito",
+                "destino": "legado-clinico",
+                "descripcion": "copia nocturna [SOAP/SQL]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "api-monolito",
+                "destino": "chime-sdk",
+                "descripcion": "crea reuniones [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "api-monolito",
+                "destino": "farmacia-centro",
+                "descripcion": "deja la receta firmada para consulta [HTTPS]",
+                "routing": "orthogonal"
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "Límite RedSalud Andina",
+              "entidad_raiz": "Límite RedSalud Andina",
+              "descripcion": "Límite RedSalud Andina",
+              "nodos": [
+                {
+                  "id": "pwa",
+                  "nombre": "PWA Teleconsulta",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Cliente del centro. Guarda la cola cuando se cae el enlace.",
+                  "fuente": "Caso de uso del taller.pdf:9,20,24,31",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Cliente offline-first de teleconsulta",
+                    "status": "borrador",
+                    "input": "Operar en modo degradado (registro local y sincronización posterior) cuando el enlace cae (RF-09); sostener la videoconsulta (RF-03).",
+                    "stories": [
+                      {
+                        "id": "st-1",
+                        "tipo": "entrada",
+                        "ref": "usuarios",
+                        "hace": "Cada rol entra por la misma app y ve solo las pantallas de su rol",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-2",
+                            "given": "un médico rural autenticado",
+                            "when": "abre la app",
+                            "then": "ve agenda, episodios y adjuntos, y no ve la consulta de auditoría"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-3",
+                        "tipo": "salida",
+                        "ref": "cognito",
+                        "hace": "Inicia sesión con MFA y obtiene el token con el grupo del rol",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-4",
+                        "tipo": "salida",
+                        "ref": "api-monolito",
+                        "hace": "Llama a la API y, al reconectar, reenvía la cola local con una clave de idempotencia por evento",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-5",
+                            "given": "el enlace del centro cayó durante un registro",
+                            "when": "el médico sigue registrando el episodio",
+                            "then": "los eventos quedan en la cola local cifrada y la app indica 'sin conexión'"
+                          },
+                          {
+                            "id": "sc-6",
+                            "given": "hay 30 eventos en la cola local",
+                            "when": "vuelve el enlace",
+                            "then": "se envían en orden y la cola queda vacía en 15 minutos o menos"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-7",
+                        "tipo": "salida",
+                        "ref": "chime-sdk",
+                        "hace": "Envía y recibe audio y video de la videoconsulta directamente al servicio de video",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-8",
+                        "tipo": "salida",
+                        "ref": "svc-auditoria",
+                        "hace": "El auditor consulta quién accedió a qué dato clínico",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "El enlace cae en mitad de la videoconsulta: el registro de asistencia sigue en la cola local.",
+                      "El usuario cierra el navegador con eventos sin sincronizar.",
+                      "Dos equipos del mismo centro editan el mismo episodio sin conexión."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-9",
+                        "texto": "El sistema MUST seguir permitiendo registrar el episodio cuando no hay conexión, sin perder ningún dato."
+                      },
+                      {
+                        "id": "fr-10",
+                        "texto": "El sistema MUST cifrar los datos clínicos que guarda en el dispositivo."
+                      },
+                      {
+                        "id": "fr-11",
+                        "texto": "El sistema MUST mostrar al usuario si trabaja con o sin conexión y cuántos eventos faltan por sincronizar."
+                      },
+                      {
+                        "id": "fr-12",
+                        "texto": "Sin conexión solo se registran nota, asistencia de un episodio ya admitido y el metadato de un adjunto. Reservar cupo, abrir la sala, firmar la receta y leer un historial no cacheado exigen enlace."
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-13",
+                        "nombre": "Evento local",
+                        "descripcion": "Cambio registrado sin conexión, con clave de idempotencia y marca de tiempo."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-14",
+                        "texto": "0 eventos perdidos en 100 cortes de enlace simulados."
+                      },
+                      {
+                        "id": "cr-15",
+                        "texto": "Sincronización completa en 15 minutos o menos tras la reconexión, sobre un enlace de 2 Mbps."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "PWA",
+                    "IndexedDB",
+                    "CloudFront"
+                  ],
+                  "x": 120,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "api-monolito",
+                  "nombre": "API Monolito modular",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Un solo servicio: agenda, episodio, receta, historial y reportes.",
+                  "fuente": "Caso de uso del taller.pdf:24,25,31,35",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Backend modular de teleconsulta",
+                    "status": "borrador",
+                    "input": "Monolito modular con contextos delimitados (agenda, episodio clínico, receta, auditoría, integración legado); servicio disponible ≥ 99,5 % mensual.",
+                    "stories": [
+                      {
+                        "id": "st-16",
+                        "tipo": "entrada",
+                        "ref": "pwa",
+                        "hace": "Recibe las peticiones y la cola offline de la PWA",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-17",
+                            "given": "un evento ya aplicado",
+                            "when": "la PWA lo reenvía con la misma clave de idempotencia",
+                            "then": "la API responde éxito y no lo aplica dos veces"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-18",
+                        "tipo": "salida",
+                        "ref": "bd-clinica",
+                        "hace": "Persiste agenda, episodios, recetas e interconsultas y lee la réplica del historial",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-19",
+                        "tipo": "salida",
+                        "ref": "s3-adjuntos",
+                        "hace": "Guarda exámenes e imágenes del episodio",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-20",
+                        "tipo": "salida",
+                        "ref": "legado-clinico",
+                        "hace": "Copia cada noche el historial a la vista de lectura propia",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-21",
+                            "given": "el legado no responde en la ventana nocturna",
+                            "when": "falla la copia",
+                            "then": "se reintenta y la vista de lectura conserva la última copia válida con su fecha"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-22",
+                        "tipo": "salida",
+                        "ref": "chime-sdk",
+                        "hace": "Crea la reunión de cada teleconsulta y entrega los datos de conexión a la PWA",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-23",
+                        "tipo": "salida",
+                        "ref": "farmacia-centro",
+                        "hace": "Envía la receta firmada a la farmacia del centro",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-24",
+                        "tipo": "salida",
+                        "ref": "svc-auditoria",
+                        "hace": "Publica un evento por cada acceso a datos clínicos",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-25",
+                            "given": "un usuario sin rol clínico",
+                            "when": "pide una historia clínica",
+                            "then": "se deniega y el intento queda auditado"
+                          }
+                        ]
+                      }
+                    ],
+                    "edgeCases": [
+                      "Pico de 40 teleconsultas simultáneas.",
+                      "Despliegue en horario de atención sin ventana de mantenimiento."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-26",
+                        "texto": "El sistema MUST ser idempotente en toda operación de escritura que pueda venir de la cola offline."
+                      },
+                      {
+                        "id": "fr-27",
+                        "texto": "El sistema MUST mantener los módulos separados por contexto: un módulo no accede a los datos de otro sino por su interfaz."
+                      },
+                      {
+                        "id": "fr-28",
+                        "texto": "El sistema MUST seguir atendiendo si falla un nodo de cómputo."
+                      },
+                      {
+                        "id": "fr-29",
+                        "texto": "El sistema MUST mantener todos los datos clínicos dentro del país.",
+                        "needsClarification": true
+                      },
+                      {
+                        "id": "fr-30",
+                        "texto": "El sistema MUST entregar la receta a la farmacia por el canal que ella acepte.",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-31",
+                        "nombre": "Episodio",
+                        "descripcion": "Una teleconsulta con su asistencia, adjuntos y receta."
+                      },
+                      {
+                        "id": "en-32",
+                        "nombre": "Interconsulta",
+                        "descripcion": "Solicitud de especialidad con estado solicitada, agendada, atendida o cerrada."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-33",
+                        "texto": "Disponibilidad mensual de 99,5 % o más."
+                      },
+                      {
+                        "id": "cr-34",
+                        "texto": "Rollback de un despliegue en 10 minutos o menos."
+                      },
+                      {
+                        "id": "cr-35",
+                        "texto": "Un cambio de proveedor del legado toca 1 módulo como máximo."
+                      },
+                      {
+                        "id": "cr-36",
+                        "texto": "Un nuevo canal (app móvil) reutiliza el 80 % o más de los servicios de dominio."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "ECS Fargate",
+                    "ALB"
+                  ],
+                  "viewRef": "bdd9d689-4cce-4081-9590-82e277fa10b5",
+                  "x": 420,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "svc-auditoria",
+                  "nombre": "Servicio de Auditoría",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Archiva cada acceso. El monolito no puede borrar esa evidencia.",
+                  "fuente": "Caso de uso del taller.pdf:19,35,38",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Auditoría demostrable de accesos clínicos",
+                    "status": "borrador",
+                    "input": "Auditar todo acceso a datos clínicos con usuario, fecha, recurso y motivo (RF-08); no basta con registrarla: hay que poder demostrarla.",
+                    "stories": [
+                      {
+                        "id": "st-37",
+                        "tipo": "entrada",
+                        "ref": "api-monolito",
+                        "hace": "Recibe por cola un evento por cada acceso clínico, incluidos los denegados",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-38",
+                            "given": "el servicio está caído 10 minutos",
+                            "when": "llegan accesos",
+                            "then": "quedan en la cola y se archivan todos al volver, sin pérdida"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-39",
+                        "tipo": "salida",
+                        "ref": "s3-auditoria",
+                        "hace": "Archiva el evento en almacenamiento inmutable",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-40",
+                            "given": "un registro archivado",
+                            "when": "un administrador intenta borrarlo o modificarlo dentro de la retención",
+                            "then": "la operación es rechazada"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-41",
+                        "tipo": "entrada",
+                        "ref": "pwa",
+                        "hace": "El auditor consulta accesos por paciente, usuario o rango de fechas",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "Evento duplicado por reintento de la cola: se archiva una sola vez.",
+                      "Acceso desde fuera del país: se bloquea y se audita el intento."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-42",
+                        "texto": "El sistema MUST registrar usuario, fecha, recurso y motivo de cada acceso a datos clínicos."
+                      },
+                      {
+                        "id": "fr-43",
+                        "texto": "El sistema MUST registrar también los intentos denegados."
+                      },
+                      {
+                        "id": "fr-44",
+                        "texto": "El sistema MUST impedir que cualquier usuario, incluido un administrador, borre o modifique un registro de auditoría."
+                      },
+                      {
+                        "id": "fr-45",
+                        "texto": "El sistema MUST conservar los registros durante el periodo que exija la regulación.",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-46",
+                        "nombre": "Evento de acceso",
+                        "descripcion": "Usuario, fecha, recurso, motivo y resultado (permitido o denegado)."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-47",
+                        "texto": "100 % de los accesos clínicos de una prueba de 1.000 lecturas aparecen en el archivo."
+                      },
+                      {
+                        "id": "cr-48",
+                        "texto": "0 registros alterables: el 100 % de los intentos de borrado de prueba son rechazados."
+                      },
+                      {
+                        "id": "cr-49",
+                        "texto": "Un acceso es consultable por el auditor en 15 minutos o menos."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "ECS Fargate",
+                    "Amazon SQS",
+                    "Amazon Athena"
+                  ],
+                  "x": 720,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "bd-clinica",
+                  "nombre": "BD Clínica",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Cupos, episodios, recetas y la copia nocturna del historial.",
+                  "fuente": "Caso de uso del taller.pdf:13,18,26,36",
+                  "metadata": [
+                    {
+                      "clave": "puerto",
+                      "valor": "5432",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "motor",
+                      "valor": "Amazon Aurora PostgreSQL (Multi-AZ)",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "esquema",
+                      "valor": "agenda, episodio, receta, interconsulta, historial_lectura",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "respaldo",
+                      "valor": "pendiente",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "KMS"
+                  ],
+                  "x": 120,
+                  "y": 420,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "s3-adjuntos",
+                  "nombre": "Adjuntos clínicos",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Exámenes e imágenes de la teleconsulta.",
+                  "fuente": "Caso de uso del taller.pdf:15,29",
+                  "metadata": [
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "motor",
+                      "valor": "Amazon S3",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Amazon S3",
+                    "KMS"
+                  ],
+                  "icono": "lu-Archive",
+                  "x": 420,
+                  "y": 420,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "s3-auditoria",
+                  "nombre": "Archivo de auditoría",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Registro inmutable de cada acceso clínico.",
+                  "fuente": "Caso de uso del taller.pdf:19,38",
+                  "metadata": [
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "motor",
+                      "valor": "Amazon S3 Object Lock (modo compliance)",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "respaldo",
+                      "valor": "pendiente: periodo de retención regulatorio",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Amazon S3",
+                    "Object Lock"
+                  ],
+                  "icono": "lu-Archive",
+                  "x": 720,
+                  "y": 420,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [
+                {
+                  "fuente": "pwa",
+                  "destino": "api-monolito",
+                  "descripcion": "llama y sincroniza [HTTPS]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "pwa",
+                  "destino": "svc-auditoria",
+                  "descripcion": "consulta accesos [HTTPS]",
+                  "routing": "orthogonal",
+                  "geometriaAuto": true
+                },
+                {
+                  "fuente": "api-monolito",
+                  "destino": "bd-clinica",
+                  "descripcion": "lee y escribe [SQL/TLS]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "api-monolito",
+                  "destino": "s3-adjuntos",
+                  "descripcion": "guarda adjuntos [S3 API]",
+                  "routing": "orthogonal",
+                  "geometriaAuto": true
+                },
+                {
+                  "fuente": "api-monolito",
+                  "destino": "svc-auditoria",
+                  "descripcion": "publica accesos [SQS]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "svc-auditoria",
+                  "destino": "s3-auditoria",
+                  "descripcion": "escribe WORM [S3 API]",
+                  "routing": "orthogonal"
+                }
+              ],
+              "x": 60,
+              "y": 170,
+              "width": 980,
+              "height": 430,
+              "tipo_contenedor": "Límite de Sistema",
+              "fuente": "Caso de uso del taller.pdf:4,28,29"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [],
+          "notas": "",
+          "transcript": "",
+          "source_docs": [
+            {
+              "nombre": "Caso de uso del taller.pdf",
+              "texto": "1. Enunciado del caso de negocio\nCliente: RedSalud Andina, una red de 14 centros de atención primaria en zonas rurales de tres provincias.\nSituación actual. Cada centro agenda por teléfono y en cuadernos; las historias clínicas viven en un sistema legado on-premise que solo responde en horario de oficina. Un paciente que necesita una interconsulta con un especialista debe viajar entre 2 y 6 horas hasta la capital provincial. El 38 % de las interconsultas se pierde por falta de seguimiento y no existe trazabilidad de quién vio qué documento clínico.\nNecesidad de negocio. Habilitar teleconsultas de especialidad entre los centros rurales y 9 especialistas itinerantes, con agenda unificada, videoconsulta, receta electrónica y seguimiento del paciente, sin reemplazar el sistema legado en el primer año.\nRestricciones declaradas por el cliente:\n- Presupuesto de nube acotado y preferencia por servicios gestionados en AWS.\n- El legado no puede modificarse; solo expone una API SOAP nocturna y una base de datos de solo lectura.\n- Regulación: los datos clínicos no pueden salir del país y toda lectura de historia clínica debe quedar auditada.\n- Conectividad intermitente en 5 de los 14 centros (enlaces de 2 Mbps con cortes diarios).\n\n3. Requisitos funcionales (RF)\nRF-01 Registrar y autenticar pacientes, médicos rurales y especialistas con roles diferenciados — Todos\nRF-02 Publicar la agenda de los 9 especialistas y permitir reserva de cupos desde cualquier centro — Médico rural\nRF-03 Sostener la videoconsulta con sala de espera, admisión y registro de asistencia — Paciente / Especialista\nRF-04 Adjuntar exámenes e imágenes al episodio de teleconsulta — Médico rural\nRF-05 Emitir receta electrónica firmada y enviarla a la farmacia del centro — Especialista\nRF-06 Consultar el historial clínico del legado en modo lectura — Especialista\nRF-07 Registrar la interconsulta con su estado (solicitada, agendada, atendida, cerrada) y alertar sobre pendientes — Gestor de red\nRF-08 Auditar todo acceso a datos clínicos con usuario, fecha, recurso y motivo — Auditoría\nRF-09 Operar en modo degradado (registro local y sincronización posterior) cuando el enlace cae — Médico rural\nRF-10 Reportar indicadores de uso: teleconsultas por centro, tiempo de espera, tasa de cierre — Gestor de red\n\n4. Matriz de requisitos de calidad (RNF -> atributos)\nDisponibilidad | El enlace de un centro rural cae durante una teleconsulta | Continuidad de registro local; 0 pérdida de datos; sincronización <= 15 min tras reconexión | RF-09, RF-03 | Cliente offline-first con cola de eventos; API idempotente\nDisponibilidad | Falla un nodo de cómputo en horario de atención | Servicio disponible >= 99,5 % mensual | RF-02, RF-03, RF-05 | Multi-AZ, auto scaling, health checks\nRendimiento | Un especialista abre el historial de un paciente | p95 <= 2 s con caché; <= 6 s en consulta al legado | RF-06 | Capa anticorrupción + caché de lectura (CQRS)\nRendimiento | Pico de 40 teleconsultas simultáneas | Latencia de señalización <= 300 ms; video sin servidor propio | RF-03 | Servicio gestionado de video (WebRTC)\nSeguridad | Un usuario sin rol clínico intenta leer una historia clínica | Denegación 100 % + registro de auditoría | RF-08, RF-06 | Autorización por rol y atributo; cifrado en tránsito y reposo; KMS\nSeguridad | Acceso a datos clínicos desde fuera del país | Bloqueo por política; residencia de datos garantizada | RF-08 | Región única, políticas de residencia, sin réplicas externas\nMantenibilidad | Cambiar la fuente del legado (nuevo proveedor) | Cambio aislado en <= 1 módulo, sin tocar dominio | RF-06 | Patrón anticorrupción como adaptador\nMantenibilidad | Incorporar un nuevo canal (app móvil del paciente) | Reutilizar >= 80 % de los servicios de dominio | RF-01, RF-02 | Monolito modular con límites explícitos por contexto\nMantenibilidad | Desplegar un cambio sin ventana de mantenimiento | Despliegue automatizado, rollback <= 10 min | Todos | CI/CD, infraestructura como código, observabilidad\n\n5. Decisiones que el participante debe abordar\n- Monolito modular vs. microservicios. Con 14 centros, 9 especialistas y un equipo pequeño, el punto de partida razonable es un monolito modular con contextos delimitados (agenda, episodio clínico, receta, auditoría, integración legado) y extraer solo lo que exija un atributo de calidad distinto — por ejemplo, la señalización de video o la ingesta de auditoría.\n- Frontera con el legado. Definir el adaptador anticorrupción y decidir si el historial se lee en tiempo real o se materializa en una vista de lectura propia.\n- Estrategia offline-first. Alcance del modo degradado: qué se puede registrar sin conexión y cómo se resuelven conflictos al sincronizar.\n- Residencia y auditoría. Dónde vive el dato clínico, quién puede leerlo y cómo se prueba la auditoría (no basta con registrarla: hay que poder demostrarla).\n- Elección de servicios AWS. Traducir cada atributo a un servicio concreto (cómputo, base de datos, colas, identidad, cifrado, observabilidad) y justificar la elección frente a la alternativa gestionada vs. autogestionada.\n- Arquitectura lógica, física y de despliegue. Producir las tres vistas diferenciadas, tal como exige el objetivo 3 del taller.\n\n6. Preguntas guía para la resolución de dudas\n- ¿Cuál de los diez RF, si fallara, rompe el negocio? Ese es el candidato a mayor inversión en disponibilidad.\n- ¿Qué requisito de calidad es táctico (se resuelve con configuración) y cuál es estructural (obliga a cambiar el diseño)?\n- ¿Qué parte del sistema puede vivir con consistencia eventual y qué parte no?\n- ¿Qué decisión tomarías distinto si el cliente duplicara el presupuesto? ¿Y si lo redujera a la mitad?\n- ¿Qué evidencia dejarías en el repositorio para demostrar que la auditoría funciona?\n\n7. Checklist de decisiones (entregables)\n- Diagrama de contexto con los sistemas externos: legado clínico, pasarela de video, farmacia, identidad, auditoría.\n- Componentes principales agrupados por contexto delimitado, con su responsabilidad en una línea.\n- Matriz de requisitos de calidad con métrica y decisión asociada (secciones 3 y 4 de este documento).\n- Postura explícita sobre monolito modular vs. microservicios, con el criterio que la sostiene.\n- Tres vistas diferenciadas: lógica, física y de despliegue.\n- Artefactos del agente generados y versionados: drivers, riesgos, propuesta técnica y al menos un ADR por decisión estructural.\n- Exportación del proyecto en Mermaid, Markdown o PDF como entregable del módulo.",
+              "origen": "PDF del taller (Diplomado, Módulo 2) — transcrito de la imagen escaneada"
+            }
+          ]
+        },
+        "createdAt": "2026-10-31T16:27:38.765Z"
+      },
+      {
+        "id": "bdd9d689-4cce-4081-9590-82e277fa10b5",
+        "name": "C4 L3 Componentes API",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · C4 L3 Componentes",
+          "version": "1.0.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-10-31",
+          "big_picture": {
+            "descripcion": "Componentes del API Monolito modular, uno por contexto delimitado, con sus vecinos directos.",
+            "hotspots": [],
+            "nodos": [
+              {
+                "id": "pwa",
+                "nombre": "PWA Teleconsulta",
+                "tipo_elemento": "Contenedor",
+                "descripcion": "Cliente del centro. Guarda la cola cuando se cae el enlace.",
+                "fuente": "Caso de uso del taller.pdf:24",
+                "metadata": [
+                  {
+                    "clave": "repo",
+                    "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                    "tipo": "texto"
+                  },
+                  {
+                    "clave": "puerto",
+                    "valor": "443",
+                    "tipo": "texto"
+                  }
+                ],
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "PWA"
+                ],
+                "x": 460,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "svc-auditoria",
+                "nombre": "Servicio de Auditoría",
+                "tipo_elemento": "Contenedor",
+                "descripcion": "Archiva cada acceso. El monolito no puede borrar esa evidencia.",
+                "fuente": "Caso de uso del taller.pdf:19,35",
+                "metadata": [
+                  {
+                    "clave": "repo",
+                    "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                    "tipo": "texto"
+                  },
+                  {
+                    "clave": "puerto",
+                    "valor": "443",
+                    "tipo": "texto"
+                  }
+                ],
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Amazon SQS"
+                ],
+                "x": 880,
+                "y": 820,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "legado-clinico",
+                "nombre": "Legado clínico",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Sistema clínico existente. API SOAP nocturna y base de solo lectura.",
+                "fuente": "Caso de uso del taller.pdf:7",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": [
+                  "SOAP"
+                ],
+                "x": 120,
+                "y": 820,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "farmacia-centro",
+                "nombre": "Farmacia del centro",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Consulta la receta electrónica firmada por el especialista.",
+                "fuente": "Caso de uso del taller.pdf:16",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": null,
+                "x": 500,
+                "y": 820,
+                "width": 220,
+                "height": 104
+              }
+            ],
+            "aristas": [
+              {
+                "fuente": "pwa",
+                "destino": "control-acceso",
+                "descripcion": "peticiones [HTTPS/JWT]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "control-acceso",
+                "destino": "svc-auditoria",
+                "descripcion": "publica acceso [SQS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "receta",
+                "destino": "farmacia-centro",
+                "descripcion": "deja la receta firmada para consulta [HTTPS]",
+                "routing": "orthogonal",
+                "geometriaAuto": true
+              },
+              {
+                "fuente": "historial-acl",
+                "destino": "legado-clinico",
+                "descripcion": "copia nocturna [SOAP/SQL]",
+                "routing": "orthogonal"
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "API Monolito modular",
+              "entidad_raiz": "API Monolito modular",
+              "descripcion": "API Monolito modular",
+              "nodos": [
+                {
+                  "id": "control-acceso",
+                  "nombre": "Control de acceso",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Verifica el rol y registra el acceso antes de entregar el dato.",
+                  "fuente": "Caso de uso del taller.pdf:12,19,28",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Autorización por rol y atributo",
+                    "status": "borrador",
+                    "input": "Un usuario sin rol clínico intenta leer una historia clínica: denegación 100 % + registro de auditoría.",
+                    "stories": [
+                      {
+                        "id": "st-50",
+                        "tipo": "entrada",
+                        "ref": "pwa",
+                        "hace": "Recibe cada petición con el token del usuario",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-51",
+                            "given": "un token vencido o adulterado",
+                            "when": "llega la petición",
+                            "then": "se rechaza sin llegar a ningún módulo"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-52",
+                        "tipo": "salida",
+                        "ref": "svc-auditoria",
+                        "hace": "Publica cada acceso clínico, permitido o denegado",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-53",
+                            "given": "un gestor de red sin rol clínico",
+                            "when": "pide la historia de un paciente",
+                            "then": "recibe denegación y queda un evento 'denegado' con usuario, recurso y motivo"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-54",
+                        "tipo": "salida",
+                        "ref": "agenda",
+                        "hace": "Enruta las peticiones de agenda autorizadas",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-55",
+                        "tipo": "salida",
+                        "ref": "episodio",
+                        "hace": "Enruta las peticiones clínicas autorizadas",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-56",
+                        "tipo": "salida",
+                        "ref": "sync-offline",
+                        "hace": "Entrega la cola offline autenticada",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-57",
+                        "tipo": "salida",
+                        "ref": "reportes",
+                        "hace": "Enruta las consultas de indicadores del gestor",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "Lectura de urgencia sin interconsulta asignada (acceso de emergencia)."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-58",
+                        "texto": "El sistema MUST decidir cada acceso clínico por rol y por atributo (por ejemplo, el especialista solo ve pacientes con interconsulta asignada)."
+                      },
+                      {
+                        "id": "fr-59",
+                        "texto": "El sistema MUST exigir un motivo en cada lectura de historia clínica."
+                      },
+                      {
+                        "id": "fr-60",
+                        "texto": "El sistema MUST bloquear el acceso desde fuera del país."
+                      },
+                      {
+                        "id": "fr-61",
+                        "texto": "El sistema MUST fijar qué atributos aparte del rol autorizan una lectura clínica.",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-62",
+                        "nombre": "Política de acceso",
+                        "descripcion": "Regla que combina rol, atributos del usuario y del recurso."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-63",
+                        "texto": "100 % de denegación en 50 intentos de lectura clínica sin rol clínico."
+                      },
+                      {
+                        "id": "cr-64",
+                        "texto": "100 % de los accesos generan un evento de auditoría."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 460,
+                  "y": 200,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "agenda",
+                  "nombre": "Agenda y cupos",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Publica los cupos de los 9 especialistas y reserva uno solo una vez.",
+                  "fuente": "Caso de uso del taller.pdf:13",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Agenda unificada de especialistas",
+                    "status": "borrador",
+                    "input": "Publicar la agenda de los 9 especialistas y permitir reserva de cupos desde cualquier centro (RF-02).",
+                    "stories": [
+                      {
+                        "id": "st-65",
+                        "tipo": "entrada",
+                        "ref": "control-acceso",
+                        "hace": "Recibe consultas de agenda y reservas autorizadas",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-66",
+                            "given": "un cupo libre del especialista",
+                            "when": "dos centros lo reservan a la vez",
+                            "then": "solo una reserva se confirma y la otra recibe 'cupo ocupado'"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-67",
+                        "tipo": "salida",
+                        "ref": "interconsultas",
+                        "hace": "Marca la interconsulta como agendada al confirmar el cupo",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "El especialista cancela una jornada con cupos ya reservados.",
+                      "Reserva intentada sin conexión."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-68",
+                        "texto": "El sistema MUST mostrar la disponibilidad de los 9 especialistas desde cualquiera de los 14 centros."
+                      },
+                      {
+                        "id": "fr-69",
+                        "texto": "El sistema MUST impedir que un cupo se asigne dos veces."
+                      },
+                      {
+                        "id": "fr-70",
+                        "texto": "El sistema MUST asociar cada reserva a una interconsulta."
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-71",
+                        "nombre": "Cupo",
+                        "descripcion": "Franja horaria de un especialista, libre o reservada."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-72",
+                        "texto": "0 cupos con doble reserva en 1.000 reservas concurrentes de prueba."
+                      },
+                      {
+                        "id": "cr-73",
+                        "texto": "La agenda carga en 2 s o menos en el p95."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 120,
+                  "y": 380,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "episodio",
+                  "nombre": "Episodio clínico",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Admisión, asistencia, notas, reunión y adjuntos.",
+                  "fuente": "Caso de uso del taller.pdf:14,15",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Teleconsulta y episodio clínico",
+                    "status": "borrador",
+                    "input": "Sostener la videoconsulta con sala de espera, admisión y registro de asistencia (RF-03); adjuntar exámenes e imágenes al episodio (RF-04).",
+                    "stories": [
+                      {
+                        "id": "st-74",
+                        "tipo": "entrada",
+                        "ref": "control-acceso",
+                        "hace": "Recibe admisión, asistencia y adjuntos",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-75",
+                            "given": "un paciente admitido en sala de espera",
+                            "when": "el especialista inicia la consulta",
+                            "then": "ambos entran a la misma reunión y se registra la asistencia"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-76",
+                        "tipo": "entrada",
+                        "ref": "sync-offline",
+                        "hace": "Recibe los cambios registrados sin conexión",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-77",
+                        "tipo": "salida",
+                        "ref": "historial-acl",
+                        "hace": "Pide el historial del paciente para el especialista",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-78",
+                        "tipo": "salida",
+                        "ref": "receta",
+                        "hace": "Pide emitir la receta del episodio",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-79",
+                        "tipo": "salida",
+                        "ref": "interconsultas",
+                        "hace": "Marca la interconsulta como atendida al cerrar el episodio",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "El paciente no se presenta: se registra la inasistencia.",
+                      "Adjunto pesado subido por un enlace de 2 Mbps."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-80",
+                        "texto": "El sistema MUST ofrecer sala de espera, admisión y registro de asistencia en cada teleconsulta."
+                      },
+                      {
+                        "id": "fr-81",
+                        "texto": "El sistema MUST permitir adjuntar exámenes e imágenes al episodio."
+                      },
+                      {
+                        "id": "fr-82",
+                        "texto": "El sistema MUST conservar el registro de asistencia aunque el video se corte."
+                      },
+                      {
+                        "id": "fr-83",
+                        "texto": "El sistema MUST fijar el tamaño máximo y los formatos de los adjuntos.",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-84",
+                        "nombre": "Episodio",
+                        "descripcion": "Teleconsulta con asistencia, adjuntos y receta."
+                      },
+                      {
+                        "id": "en-85",
+                        "nombre": "Adjunto",
+                        "descripcion": "Examen o imagen asociado a un episodio."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-86",
+                        "texto": "Latencia de señalización de 300 ms o menos con 40 teleconsultas simultáneas."
+                      },
+                      {
+                        "id": "cr-87",
+                        "texto": "100 % de las teleconsultas con asistencia registrada."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 420,
+                  "y": 380,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "receta",
+                  "nombre": "Receta electrónica",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Firma la receta y la deja lista para la farmacia del centro.",
+                  "fuente": "Caso de uso del taller.pdf:16",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Receta electrónica firmada",
+                    "status": "borrador",
+                    "input": "Emitir receta electrónica firmada y enviarla a la farmacia del centro (RF-05).",
+                    "stories": [
+                      {
+                        "id": "st-88",
+                        "tipo": "entrada",
+                        "ref": "episodio",
+                        "hace": "Recibe la orden de emitir la receta del episodio",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-89",
+                        "tipo": "salida",
+                        "ref": "farmacia-centro",
+                        "hace": "Envía la receta firmada a la farmacia del centro del paciente",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-90",
+                            "given": "una receta firmada",
+                            "when": "la farmacia no está disponible",
+                            "then": "la receta queda firmada y la farmacia del centro la consulta cuando tiene enlace"
+                          },
+                          {
+                            "id": "sc-91",
+                            "given": "una receta recibida",
+                            "when": "alguien altera su contenido",
+                            "then": "la verificación de la firma falla"
+                          }
+                        ]
+                      }
+                    ],
+                    "edgeCases": [
+                      "El especialista anula una receta ya enviada."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-92",
+                        "texto": "El sistema MUST firmar cada receta con la identidad del especialista que la emite."
+                      },
+                      {
+                        "id": "fr-93",
+                        "texto": "El sistema MUST permitir verificar que una receta no fue alterada después de firmada."
+                      },
+                      {
+                        "id": "fr-94",
+                        "texto": "El sistema MUST entregar la receta por el canal que la farmacia acepte.",
+                        "needsClarification": true
+                      },
+                      {
+                        "id": "fr-95",
+                        "texto": "El sistema MUST cumplir el formato legal de receta electrónica del país.",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-96",
+                        "nombre": "Receta",
+                        "descripcion": "Prescripción firmada asociada a un episodio y a una farmacia."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-97",
+                        "texto": "100 % de las recetas emitidas llevan firma verificable."
+                      },
+                      {
+                        "id": "cr-98",
+                        "texto": "La receta llega a la farmacia en 5 minutos o menos cuando hay conexión."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 420,
+                  "y": 560,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "interconsultas",
+                  "nombre": "Interconsultas",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Pasa de solicitada a cerrada y alerta lo que se queda pendiente.",
+                  "fuente": "Caso de uso del taller.pdf:3,18",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Seguimiento de interconsultas",
+                    "status": "borrador",
+                    "input": "Registrar la interconsulta con su estado (solicitada, agendada, atendida, cerrada) y alertar sobre pendientes (RF-07).",
+                    "stories": [
+                      {
+                        "id": "st-99",
+                        "tipo": "entrada",
+                        "ref": "agenda",
+                        "hace": "Pasa la interconsulta a 'agendada'",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-100",
+                            "given": "una interconsulta 'solicitada'",
+                            "when": "se confirma su cupo",
+                            "then": "queda 'agendada' con fecha y especialista"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-101",
+                        "tipo": "entrada",
+                        "ref": "episodio",
+                        "hace": "Pasa la interconsulta a 'atendida'",
+                        "detalle": [],
+                        "escenarios": []
+                      },
+                      {
+                        "id": "st-102",
+                        "tipo": "entrada",
+                        "ref": "reportes",
+                        "hace": "Entrega estados y tiempos para los indicadores",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "Interconsulta cancelada por el paciente.",
+                      "Paciente que no se presenta y debe reagendarse."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-103",
+                        "texto": "El sistema MUST permitir solo las transiciones solicitada → agendada → atendida → cerrada."
+                      },
+                      {
+                        "id": "fr-104",
+                        "texto": "El sistema MUST alertar al gestor de red sobre interconsultas que lleven demasiado tiempo en un estado."
+                      },
+                      {
+                        "id": "fr-105",
+                        "texto": "El sistema MUST fijar el umbral de días que dispara la alerta por estado.",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-106",
+                        "nombre": "Interconsulta",
+                        "descripcion": "Solicitud de especialidad con estado e historial de transiciones."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-107",
+                        "texto": "100 % de las interconsultas pendientes por encima del umbral generan alerta."
+                      },
+                      {
+                        "id": "cr-108",
+                        "texto": "Reducir del 38 % a menos del 10 % las interconsultas perdidas en el primer año."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 720,
+                  "y": 560,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "historial-acl",
+                  "nombre": "Historial (ACL)",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Copia el legado a una vista de lectura. Cambiar de proveedor solo toca aquí.",
+                  "fuente": "Caso de uso del taller.pdf:17,26,30,36",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Historial del legado en modo lectura",
+                    "status": "borrador",
+                    "input": "Consultar el historial clínico del legado en modo lectura (RF-06); p95 ≤ 2 s con caché; patrón anticorrupción como adaptador.",
+                    "stories": [
+                      {
+                        "id": "st-109",
+                        "tipo": "entrada",
+                        "ref": "episodio",
+                        "hace": "Recibe la petición del historial de un paciente",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-110",
+                            "given": "el historial ya está en la vista de lectura",
+                            "when": "el especialista lo abre",
+                            "then": "se muestra con la fecha de la última copia"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-111",
+                        "tipo": "salida",
+                        "ref": "legado-clinico",
+                        "hace": "Copia cada noche el historial y lo traduce al modelo propio",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-112",
+                            "given": "la copia nocturna falla",
+                            "when": "el especialista abre el historial al día siguiente",
+                            "then": "ve la copia anterior con un aviso de que puede estar desactualizada"
+                          }
+                        ]
+                      }
+                    ],
+                    "edgeCases": [
+                      "Paciente nuevo que todavía no está en la copia nocturna."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-113",
+                        "texto": "El sistema MUST traducir el modelo del legado al modelo propio sin que ningún otro módulo conozca el formato del legado."
+                      },
+                      {
+                        "id": "fr-114",
+                        "texto": "El sistema MUST mostrar la fecha de la última copia junto al historial."
+                      },
+                      {
+                        "id": "fr-115",
+                        "texto": "El sistema MUST no escribir nunca en el legado."
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-116",
+                        "nombre": "Historial (lectura)",
+                        "descripcion": "Copia traducida del historial del legado, de solo lectura."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-117",
+                        "texto": "p95 de apertura del historial de 2 s o menos."
+                      },
+                      {
+                        "id": "cr-118",
+                        "texto": "Cambiar de proveedor del legado modifica solo este módulo (1 módulo)."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 120,
+                  "y": 560,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "sync-offline",
+                  "nombre": "Sync offline",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Aplica la cola del centro sin duplicar y sin esconder un conflicto.",
+                  "fuente": "Caso de uso del taller.pdf:20,24,37",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Sincronización de la cola offline",
+                    "status": "borrador",
+                    "input": "Sincronización ≤ 15 min tras reconexión; 0 pérdida de datos; cómo se resuelven conflictos al sincronizar.",
+                    "stories": [
+                      {
+                        "id": "st-119",
+                        "tipo": "entrada",
+                        "ref": "control-acceso",
+                        "hace": "Recibe la cola de eventos autenticada",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-120",
+                            "given": "un evento ya aplicado antes",
+                            "when": "llega otra vez",
+                            "then": "se descarta sin error"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-121",
+                        "tipo": "salida",
+                        "ref": "episodio",
+                        "hace": "Aplica los eventos en el orden en que se registraron",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-122",
+                            "given": "dos cambios offline sobre el mismo episodio",
+                            "when": "se sincronizan",
+                            "then": "se resuelven según la política de conflictos y el descartado queda registrado"
+                          }
+                        ]
+                      }
+                    ],
+                    "edgeCases": [
+                      "Cola con eventos de hace más de 24 h.",
+                      "Evento que referencia un cupo que otro centro ya tomó."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-123",
+                        "texto": "El sistema MUST aplicar cada evento exactamente una vez."
+                      },
+                      {
+                        "id": "fr-124",
+                        "texto": "El sistema MUST respetar el orden de registro de los eventos de un mismo episodio."
+                      },
+                      {
+                        "id": "fr-125",
+                        "texto": "El sistema MUST resolver los conflictos con una política definida (último en escribir, fusión o revisión manual).",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-126",
+                        "nombre": "Evento local",
+                        "descripcion": "Cambio con clave de idempotencia, marca de tiempo y autor."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-127",
+                        "texto": "0 eventos perdidos y 0 duplicados en 100 reconexiones de prueba."
+                      },
+                      {
+                        "id": "cr-128",
+                        "texto": "Cola sincronizada en 15 minutos o menos tras la reconexión."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 720,
+                  "y": 380,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "reportes",
+                  "nombre": "Reportes",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Teleconsultas por centro, tiempo de espera y tasa de cierre.",
+                  "fuente": "Caso de uso del taller.pdf:21",
+                  "metadata": [
+                    {
+                      "clave": "repo",
+                      "valor": "entregable/RedSalud-Andina-Arquitectura.md",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "443",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "spec": {
+                    "featureName": "Indicadores de uso de la red",
+                    "status": "borrador",
+                    "input": "Reportar indicadores de uso: teleconsultas por centro, tiempo de espera, tasa de cierre (RF-10).",
+                    "stories": [
+                      {
+                        "id": "st-129",
+                        "tipo": "entrada",
+                        "ref": "control-acceso",
+                        "hace": "Recibe las consultas del gestor de red",
+                        "detalle": [],
+                        "escenarios": [
+                          {
+                            "id": "sc-130",
+                            "given": "un mes con teleconsultas en los 14 centros",
+                            "when": "el gestor pide el reporte mensual",
+                            "then": "ve teleconsultas por centro, tiempo de espera medio y tasa de cierre"
+                          }
+                        ]
+                      },
+                      {
+                        "id": "st-131",
+                        "tipo": "salida",
+                        "ref": "interconsultas",
+                        "hace": "Lee estados y tiempos de las interconsultas",
+                        "detalle": [],
+                        "escenarios": []
+                      }
+                    ],
+                    "edgeCases": [
+                      "Centro sin teleconsultas en el periodo."
+                    ],
+                    "requirements": [
+                      {
+                        "id": "fr-132",
+                        "texto": "El sistema MUST calcular teleconsultas por centro, tiempo de espera y tasa de cierre."
+                      },
+                      {
+                        "id": "fr-133",
+                        "texto": "El sistema MUST permitir filtrar los indicadores por centro y por periodo."
+                      },
+                      {
+                        "id": "fr-134",
+                        "texto": "El sistema MUST definir desde qué evento se mide el tiempo de espera (solicitud o agendamiento).",
+                        "needsClarification": true
+                      }
+                    ],
+                    "entities": [
+                      {
+                        "id": "en-135",
+                        "nombre": "Indicador",
+                        "descripcion": "Métrica agregada por centro y periodo."
+                      }
+                    ],
+                    "criteria": [
+                      {
+                        "id": "cr-136",
+                        "texto": "El reporte mensual de los 14 centros se genera en 10 s o menos."
+                      }
+                    ]
+                  },
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 1020,
+                  "y": 380,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [
+                {
+                  "fuente": "control-acceso",
+                  "destino": "agenda",
+                  "descripcion": "enruta [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "control-acceso",
+                  "destino": "episodio",
+                  "descripcion": "enruta [interno]",
+                  "routing": "orthogonal",
+                  "geometriaAuto": true
+                },
+                {
+                  "fuente": "control-acceso",
+                  "destino": "sync-offline",
+                  "descripcion": "entrega cola [interno]",
+                  "routing": "orthogonal",
+                  "geometriaAuto": true
+                },
+                {
+                  "fuente": "control-acceso",
+                  "destino": "reportes",
+                  "descripcion": "enruta [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "sync-offline",
+                  "destino": "episodio",
+                  "descripcion": "reaplica eventos [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "episodio",
+                  "destino": "historial-acl",
+                  "descripcion": "lee historial [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "episodio",
+                  "destino": "receta",
+                  "descripcion": "emite receta [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "episodio",
+                  "destino": "interconsultas",
+                  "descripcion": "marca atendida [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "agenda",
+                  "destino": "interconsultas",
+                  "descripcion": "marca agendada [interno]",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "reportes",
+                  "destino": "interconsultas",
+                  "descripcion": "lee indicadores [SQL]",
+                  "routing": "orthogonal"
+                }
+              ],
+              "x": 60,
+              "y": 160,
+              "width": 1240,
+              "height": 520,
+              "tipo_contenedor": "Límite de Contenedor",
+              "fuente": "Caso de uso del taller.pdf:31,35"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [],
+          "notas": "",
+          "transcript": "",
+          "source_docs": [
+            {
+              "nombre": "Caso de uso del taller.pdf",
+              "texto": "1. Enunciado del caso de negocio\nCliente: RedSalud Andina, una red de 14 centros de atención primaria en zonas rurales de tres provincias.\nSituación actual. Cada centro agenda por teléfono y en cuadernos; las historias clínicas viven en un sistema legado on-premise que solo responde en horario de oficina. Un paciente que necesita una interconsulta con un especialista debe viajar entre 2 y 6 horas hasta la capital provincial. El 38 % de las interconsultas se pierde por falta de seguimiento y no existe trazabilidad de quién vio qué documento clínico.\nNecesidad de negocio. Habilitar teleconsultas de especialidad entre los centros rurales y 9 especialistas itinerantes, con agenda unificada, videoconsulta, receta electrónica y seguimiento del paciente, sin reemplazar el sistema legado en el primer año.\nRestricciones declaradas por el cliente:\n- Presupuesto de nube acotado y preferencia por servicios gestionados en AWS.\n- El legado no puede modificarse; solo expone una API SOAP nocturna y una base de datos de solo lectura.\n- Regulación: los datos clínicos no pueden salir del país y toda lectura de historia clínica debe quedar auditada.\n- Conectividad intermitente en 5 de los 14 centros (enlaces de 2 Mbps con cortes diarios).\n\n3. Requisitos funcionales (RF)\nRF-01 Registrar y autenticar pacientes, médicos rurales y especialistas con roles diferenciados — Todos\nRF-02 Publicar la agenda de los 9 especialistas y permitir reserva de cupos desde cualquier centro — Médico rural\nRF-03 Sostener la videoconsulta con sala de espera, admisión y registro de asistencia — Paciente / Especialista\nRF-04 Adjuntar exámenes e imágenes al episodio de teleconsulta — Médico rural\nRF-05 Emitir receta electrónica firmada y enviarla a la farmacia del centro — Especialista\nRF-06 Consultar el historial clínico del legado en modo lectura — Especialista\nRF-07 Registrar la interconsulta con su estado (solicitada, agendada, atendida, cerrada) y alertar sobre pendientes — Gestor de red\nRF-08 Auditar todo acceso a datos clínicos con usuario, fecha, recurso y motivo — Auditoría\nRF-09 Operar en modo degradado (registro local y sincronización posterior) cuando el enlace cae — Médico rural\nRF-10 Reportar indicadores de uso: teleconsultas por centro, tiempo de espera, tasa de cierre — Gestor de red\n\n4. Matriz de requisitos de calidad (RNF -> atributos)\nDisponibilidad | El enlace de un centro rural cae durante una teleconsulta | Continuidad de registro local; 0 pérdida de datos; sincronización <= 15 min tras reconexión | RF-09, RF-03 | Cliente offline-first con cola de eventos; API idempotente\nDisponibilidad | Falla un nodo de cómputo en horario de atención | Servicio disponible >= 99,5 % mensual | RF-02, RF-03, RF-05 | Multi-AZ, auto scaling, health checks\nRendimiento | Un especialista abre el historial de un paciente | p95 <= 2 s con caché; <= 6 s en consulta al legado | RF-06 | Capa anticorrupción + caché de lectura (CQRS)\nRendimiento | Pico de 40 teleconsultas simultáneas | Latencia de señalización <= 300 ms; video sin servidor propio | RF-03 | Servicio gestionado de video (WebRTC)\nSeguridad | Un usuario sin rol clínico intenta leer una historia clínica | Denegación 100 % + registro de auditoría | RF-08, RF-06 | Autorización por rol y atributo; cifrado en tránsito y reposo; KMS\nSeguridad | Acceso a datos clínicos desde fuera del país | Bloqueo por política; residencia de datos garantizada | RF-08 | Región única, políticas de residencia, sin réplicas externas\nMantenibilidad | Cambiar la fuente del legado (nuevo proveedor) | Cambio aislado en <= 1 módulo, sin tocar dominio | RF-06 | Patrón anticorrupción como adaptador\nMantenibilidad | Incorporar un nuevo canal (app móvil del paciente) | Reutilizar >= 80 % de los servicios de dominio | RF-01, RF-02 | Monolito modular con límites explícitos por contexto\nMantenibilidad | Desplegar un cambio sin ventana de mantenimiento | Despliegue automatizado, rollback <= 10 min | Todos | CI/CD, infraestructura como código, observabilidad\n\n5. Decisiones que el participante debe abordar\n- Monolito modular vs. microservicios. Con 14 centros, 9 especialistas y un equipo pequeño, el punto de partida razonable es un monolito modular con contextos delimitados (agenda, episodio clínico, receta, auditoría, integración legado) y extraer solo lo que exija un atributo de calidad distinto — por ejemplo, la señalización de video o la ingesta de auditoría.\n- Frontera con el legado. Definir el adaptador anticorrupción y decidir si el historial se lee en tiempo real o se materializa en una vista de lectura propia.\n- Estrategia offline-first. Alcance del modo degradado: qué se puede registrar sin conexión y cómo se resuelven conflictos al sincronizar.\n- Residencia y auditoría. Dónde vive el dato clínico, quién puede leerlo y cómo se prueba la auditoría (no basta con registrarla: hay que poder demostrarla).\n- Elección de servicios AWS. Traducir cada atributo a un servicio concreto (cómputo, base de datos, colas, identidad, cifrado, observabilidad) y justificar la elección frente a la alternativa gestionada vs. autogestionada.\n- Arquitectura lógica, física y de despliegue. Producir las tres vistas diferenciadas, tal como exige el objetivo 3 del taller.\n\n6. Preguntas guía para la resolución de dudas\n- ¿Cuál de los diez RF, si fallara, rompe el negocio? Ese es el candidato a mayor inversión en disponibilidad.\n- ¿Qué requisito de calidad es táctico (se resuelve con configuración) y cuál es estructural (obliga a cambiar el diseño)?\n- ¿Qué parte del sistema puede vivir con consistencia eventual y qué parte no?\n- ¿Qué decisión tomarías distinto si el cliente duplicara el presupuesto? ¿Y si lo redujera a la mitad?\n- ¿Qué evidencia dejarías en el repositorio para demostrar que la auditoría funciona?\n\n7. Checklist de decisiones (entregables)\n- Diagrama de contexto con los sistemas externos: legado clínico, pasarela de video, farmacia, identidad, auditoría.\n- Componentes principales agrupados por contexto delimitado, con su responsabilidad en una línea.\n- Matriz de requisitos de calidad con métrica y decisión asociada (secciones 3 y 4 de este documento).\n- Postura explícita sobre monolito modular vs. microservicios, con el criterio que la sostiene.\n- Tres vistas diferenciadas: lógica, física y de despliegue.\n- Artefactos del agente generados y versionados: drivers, riesgos, propuesta técnica y al menos un ADR por decisión estructural.\n- Exportación del proyecto en Mermaid, Markdown o PDF como entregable del módulo.",
+              "origen": "PDF del taller (Diplomado, Módulo 2) — transcrito de la imagen escaneada"
+            }
+          ]
+        },
+        "createdAt": "2026-10-31T16:27:38.791Z"
+      },
+      {
+        "id": "a1b2c3d4-2222-4aaa-8aaa-000000000002",
+        "name": "Vista física",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · Vista física",
+          "version": "1.1.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-11-06",
+          "big_picture": {
+            "descripcion": "Dónde vive cada cosa. El dato clínico no sale del país. El video no entra a la API.",
+            "hotspots": [],
+            "nodos": [
+              {
+                "id": "chime",
+                "nombre": "Región de medios de Chime",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Audio y video. Tiene que quedar en una región de medios del país.",
+                "fuente": "Entregable 2026-11-06",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "WebRTC"
+                ],
+                "x": 1120,
+                "y": 90,
+                "width": 220,
+                "height": 104
+              }
+            ],
+            "aristas": [
+              {
+                "fuente": "pwa",
+                "destino": "chime",
+                "descripcion": "audio y video [WebRTC]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "pwa-esp",
+                "destino": "chime",
+                "descripcion": "audio y video [WebRTC]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "datos",
+                "destino": "sql",
+                "descripcion": "copia nocturna [SOAP/SQL]",
+                "routing": "orthogonal"
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "14 centros rurales",
+              "entidad_raiz": "14 centros rurales",
+              "descripcion": "Enlace de 2 Mbps. En 5 centros hay cortes diarios. PC compartido del consultorio.",
+              "nodos": [
+                {
+                  "id": "pwa",
+                  "nombre": "Navegador del centro",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Cliente del centro. Guarda la cola cuando se cae el enlace.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "IndexedDB"
+                  ],
+                  "x": 80,
+                  "y": 340,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 30,
+              "y": 270,
+              "width": 320,
+              "height": 210,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo"
+            },
+            {
+              "nombre_agregado": "Donde esté el especialista",
+              "entidad_raiz": "Donde esté el especialista",
+              "descripcion": "Itinerante. No guarda la copia maestra.",
+              "nodos": [
+                {
+                  "id": "pwa-esp",
+                  "nombre": "Navegador del especialista",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "El mismo cliente, en donde esté el especialista.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 80,
+                  "y": 80,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 30,
+              "y": 20,
+              "width": 320,
+              "height": 210,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo"
+            },
+            {
+              "nombre_agregado": "Una región AWS dentro del país",
+              "entidad_raiz": "Una región AWS dentro del país",
+              "descripcion": "Dos zonas activas. Sin réplica de datos hacia otra región.",
+              "nodos": [
+                {
+                  "id": "aza",
+                  "nombre": "Zona A",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Tareas de la API y de la auditoría en la zona A.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 460,
+                  "y": 90,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "azb",
+                  "nombre": "Zona B",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Las mismas tareas en la zona B.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": null,
+                  "x": 740,
+                  "y": 90,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "datos",
+                  "nombre": "Datos clínicos",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Aurora, adjuntos y archivo de auditoría. No salen del país.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "KMS"
+                  ],
+                  "x": 600,
+                  "y": 270,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [
+                {
+                  "fuente": "aza",
+                  "destino": "datos",
+                  "descripcion": "red privada",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "azb",
+                  "destino": "datos",
+                  "descripcion": "red privada",
+                  "routing": "orthogonal"
+                }
+              ],
+              "x": 400,
+              "y": 20,
+              "width": 660,
+              "height": 420,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo"
+            },
+            {
+              "nombre_agregado": "Datacenter del legado",
+              "entidad_raiz": "Datacenter del legado",
+              "descripcion": "On-premise. Horario de oficina. La plataforma no tiene usuario de escritura.",
+              "nodos": [
+                {
+                  "id": "soap",
+                  "nombre": "API SOAP",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Se consulta de noche y solo para leer.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "existente",
+                  "tags_tecnologia": [
+                    "SOAP"
+                  ],
+                  "x": 460,
+                  "y": 560,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "sql",
+                  "nombre": "Base de solo lectura",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Base de solo lectura. La plataforma no escribe aquí.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "existente",
+                  "tags_tecnologia": [
+                    "SQL"
+                  ],
+                  "x": 740,
+                  "y": 560,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 400,
+              "y": 480,
+              "width": 660,
+              "height": 230,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [
+            "Juan Camilo Martínez"
+          ],
+          "notas": "",
+          "transcript": "",
+          "source_docs": [
+            {
+              "nombre": "Caso de uso del taller.pdf",
+              "texto": "1. Enunciado del caso de negocio\nCliente: RedSalud Andina, una red de 14 centros de atención primaria en zonas rurales de tres provincias.\nSituación actual. Cada centro agenda por teléfono y en cuadernos; las historias clínicas viven en un sistema legado on-premise que solo responde en horario de oficina. Un paciente que necesita una interconsulta con un especialista debe viajar entre 2 y 6 horas hasta la capital provincial. El 38 % de las interconsultas se pierde por falta de seguimiento y no existe trazabilidad de quién vio qué documento clínico.\nNecesidad de negocio. Habilitar teleconsultas de especialidad entre los centros rurales y 9 especialistas itinerantes, con agenda unificada, videoconsulta, receta electrónica y seguimiento del paciente, sin reemplazar el sistema legado en el primer año.\nRestricciones declaradas por el cliente:\n- Presupuesto de nube acotado y preferencia por servicios gestionados en AWS.\n- El legado no puede modificarse; solo expone una API SOAP nocturna y una base de datos de solo lectura.\n- Regulación: los datos clínicos no pueden salir del país y toda lectura de historia clínica debe quedar auditada.\n- Conectividad intermitente en 5 de los 14 centros (enlaces de 2 Mbps con cortes diarios).\n\n3. Requisitos funcionales (RF)\nRF-01 Registrar y autenticar pacientes, médicos rurales y especialistas con roles diferenciados — Todos\nRF-02 Publicar la agenda de los 9 especialistas y permitir reserva de cupos desde cualquier centro — Médico rural\nRF-03 Sostener la videoconsulta con sala de espera, admisión y registro de asistencia — Paciente / Especialista\nRF-04 Adjuntar exámenes e imágenes al episodio de teleconsulta — Médico rural\nRF-05 Emitir receta electrónica firmada y enviarla a la farmacia del centro — Especialista\nRF-06 Consultar el historial clínico del legado en modo lectura — Especialista\nRF-07 Registrar la interconsulta con su estado (solicitada, agendada, atendida, cerrada) y alertar sobre pendientes — Gestor de red\nRF-08 Auditar todo acceso a datos clínicos con usuario, fecha, recurso y motivo — Auditoría\nRF-09 Operar en modo degradado (registro local y sincronización posterior) cuando el enlace cae — Médico rural\nRF-10 Reportar indicadores de uso: teleconsultas por centro, tiempo de espera, tasa de cierre — Gestor de red\n\n4. Matriz de requisitos de calidad (RNF -> atributos)\nDisponibilidad | El enlace de un centro rural cae durante una teleconsulta | Continuidad de registro local; 0 pérdida de datos; sincronización <= 15 min tras reconexión | RF-09, RF-03 | Cliente offline-first con cola de eventos; API idempotente\nDisponibilidad | Falla un nodo de cómputo en horario de atención | Servicio disponible >= 99,5 % mensual | RF-02, RF-03, RF-05 | Multi-AZ, auto scaling, health checks\nRendimiento | Un especialista abre el historial de un paciente | p95 <= 2 s con caché; <= 6 s en consulta al legado | RF-06 | Capa anticorrupción + caché de lectura (CQRS)\nRendimiento | Pico de 40 teleconsultas simultáneas | Latencia de señalización <= 300 ms; video sin servidor propio | RF-03 | Servicio gestionado de video (WebRTC)\nSeguridad | Un usuario sin rol clínico intenta leer una historia clínica | Denegación 100 % + registro de auditoría | RF-08, RF-06 | Autorización por rol y atributo; cifrado en tránsito y reposo; KMS\nSeguridad | Acceso a datos clínicos desde fuera del país | Bloqueo por política; residencia de datos garantizada | RF-08 | Región única, políticas de residencia, sin réplicas externas\nMantenibilidad | Cambiar la fuente del legado (nuevo proveedor) | Cambio aislado en <= 1 módulo, sin tocar dominio | RF-06 | Patrón anticorrupción como adaptador\nMantenibilidad | Incorporar un nuevo canal (app móvil del paciente) | Reutilizar >= 80 % de los servicios de dominio | RF-01, RF-02 | Monolito modular con límites explícitos por contexto\nMantenibilidad | Desplegar un cambio sin ventana de mantenimiento | Despliegue automatizado, rollback <= 10 min | Todos | CI/CD, infraestructura como código, observabilidad\n\n5. Decisiones que el participante debe abordar\n- Monolito modular vs. microservicios. Con 14 centros, 9 especialistas y un equipo pequeño, el punto de partida razonable es un monolito modular con contextos delimitados (agenda, episodio clínico, receta, auditoría, integración legado) y extraer solo lo que exija un atributo de calidad distinto — por ejemplo, la señalización de video o la ingesta de auditoría.\n- Frontera con el legado. Definir el adaptador anticorrupción y decidir si el historial se lee en tiempo real o se materializa en una vista de lectura propia.\n- Estrategia offline-first. Alcance del modo degradado: qué se puede registrar sin conexión y cómo se resuelven conflictos al sincronizar.\n- Residencia y auditoría. Dónde vive el dato clínico, quién puede leerlo y cómo se prueba la auditoría (no basta con registrarla: hay que poder demostrarla).\n- Elección de servicios AWS. Traducir cada atributo a un servicio concreto (cómputo, base de datos, colas, identidad, cifrado, observabilidad) y justificar la elección frente a la alternativa gestionada vs. autogestionada.\n- Arquitectura lógica, física y de despliegue. Producir las tres vistas diferenciadas, tal como exige el objetivo 3 del taller.\n\n6. Preguntas guía para la resolución de dudas\n- ¿Cuál de los diez RF, si fallara, rompe el negocio? Ese es el candidato a mayor inversión en disponibilidad.\n- ¿Qué requisito de calidad es táctico (se resuelve con configuración) y cuál es estructural (obliga a cambiar el diseño)?\n- ¿Qué parte del sistema puede vivir con consistencia eventual y qué parte no?\n- ¿Qué decisión tomarías distinto si el cliente duplicara el presupuesto? ¿Y si lo redujera a la mitad?\n- ¿Qué evidencia dejarías en el repositorio para demostrar que la auditoría funciona?\n\n7. Checklist de decisiones (entregables)\n- Diagrama de contexto con los sistemas externos: legado clínico, pasarela de video, farmacia, identidad, auditoría.\n- Componentes principales agrupados por contexto delimitado, con su responsabilidad en una línea.\n- Matriz de requisitos de calidad con métrica y decisión asociada (secciones 3 y 4 de este documento).\n- Postura explícita sobre monolito modular vs. microservicios, con el criterio que la sostiene.\n- Tres vistas diferenciadas: lógica, física y de despliegue.\n- Artefactos del agente generados y versionados: drivers, riesgos, propuesta técnica y al menos un ADR por decisión estructural.\n- Exportación del proyecto en Mermaid, Markdown o PDF como entregable del módulo.",
+              "origen": "PDF del taller (Diplomado, Módulo 2) — transcrito de la imagen escaneada"
+            }
+          ]
+        },
+        "createdAt": "2026-11-06T20:00:00.000Z"
+      },
+      {
+        "id": "a1b2c3d4-3333-4aaa-8aaa-000000000003",
+        "name": "Vista de despliegue",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · Vista de despliegue",
+          "version": "1.1.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-11-06",
+          "big_picture": {
+            "descripcion": "Unidades que se instalan. Dos servicios propios. El resto es gestionado.",
+            "hotspots": [],
+            "nodos": [
+              {
+                "id": "cicd",
+                "nombre": "Pipeline",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Prueba, despliega y puede volver atrás en 10 minutos.",
+                "fuente": "Entregable 2026-11-06",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "GitHub Actions"
+                ],
+                "x": 40,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "cf",
+                "nombre": "CloudFront y bucket de la PWA",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Entrega la aplicación. No guarda datos clínicos.",
+                "fuente": "Entregable 2026-11-06",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "CloudFront",
+                  "S3"
+                ],
+                "x": 300,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "cognito",
+                "nombre": "Cognito",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Identidad de los cinco roles, con MFA.",
+                "fuente": "Entregable 2026-11-06",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Amazon Cognito"
+                ],
+                "x": 560,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "chime-sdk",
+                "nombre": "Chime SDK",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Audio y video de la teleconsulta, sin servidor de video propio.",
+                "fuente": "Entregable 2026-11-06",
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "WebRTC"
+                ],
+                "x": 820,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              },
+              {
+                "id": "legado-clinico",
+                "nombre": "Legado on-premise",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Sistema clínico existente. API SOAP nocturna y base de solo lectura.",
+                "fuente": "Entregable 2026-11-06",
+                "estado_comparativo": "existente",
+                "tags_tecnologia": [
+                  "SOAP"
+                ],
+                "x": 1080,
+                "y": 20,
+                "width": 220,
+                "height": 104
+              }
+            ],
+            "aristas": [
+              {
+                "fuente": "cicd",
+                "destino": "api",
+                "descripcion": "despliega la imagen",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "cicd",
+                "destino": "aud",
+                "descripcion": "despliega la imagen",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "api",
+                "destino": "chime-sdk",
+                "descripcion": "crea la reunión [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "api",
+                "destino": "cognito",
+                "descripcion": "valida el JWT",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "job",
+                "destino": "legado-clinico",
+                "descripcion": "copia nocturna",
+                "routing": "orthogonal"
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "VPC en dos zonas",
+              "entidad_raiz": "VPC en dos zonas",
+              "descripcion": "Las tareas no tienen salida directa a internet. Entran por el balanceador.",
+              "nodos": [
+                {
+                  "id": "alb",
+                  "nombre": "ALB",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Recibe el HTTPS y reparte entre las dos zonas.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "ALB"
+                  ],
+                  "x": 80,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "api",
+                  "nombre": "Servicio API",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "El monolito. Mínimo dos tareas, una en cada zona.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "ECS Fargate"
+                  ],
+                  "x": 360,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "aud",
+                  "nombre": "Servicio auditoría",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Lee la cola y escribe el archivo de auditoría.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "ECS Fargate"
+                  ],
+                  "x": 640,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "job",
+                  "nombre": "Tarea nocturna",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Cada noche copia el historial del legado.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "EventBridge"
+                  ],
+                  "x": 920,
+                  "y": 230,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "aurora",
+                  "nombre": "Aurora PostgreSQL",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Base transaccional y vista de lectura del historial.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL"
+                  ],
+                  "x": 80,
+                  "y": 400,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "s3adj",
+                  "nombre": "Bucket adjuntos",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "El navegador sube el examen directo, sin pasar por el servicio.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "S3",
+                    "KMS"
+                  ],
+                  "x": 360,
+                  "y": 400,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "cola",
+                  "nombre": "Cola de accesos y DLQ",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Si esta cola no acepta el evento, el dato clínico no se entrega.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "SQS"
+                  ],
+                  "x": 640,
+                  "y": 400,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "s3worm",
+                  "nombre": "Archivo de auditoría",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Archivo que no se puede borrar durante la retención.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "S3 Object Lock"
+                  ],
+                  "x": 920,
+                  "y": 400,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "kms",
+                  "nombre": "KMS",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Cifra los datos y firma la receta.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "KMS"
+                  ],
+                  "x": 80,
+                  "y": 570,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "athena",
+                  "nombre": "Athena",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "La consulta del auditor sobre el archivo.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Athena"
+                  ],
+                  "x": 360,
+                  "y": 570,
+                  "width": 220,
+                  "height": 104
+                },
+                {
+                  "id": "cw",
+                  "nombre": "CloudWatch",
+                  "tipo_elemento": "Contenedor",
+                  "descripcion": "Avisos si falla la cola, el balanceador o la copia nocturna.",
+                  "fuente": "Entregable 2026-11-06",
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "CloudWatch"
+                  ],
+                  "x": 640,
+                  "y": 570,
+                  "width": 220,
+                  "height": 104
+                }
+              ],
+              "aristas": [
+                {
+                  "fuente": "alb",
+                  "destino": "api",
+                  "descripcion": "enruta",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "api",
+                  "destino": "aurora",
+                  "descripcion": "SQL / TLS",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "api",
+                  "destino": "s3adj",
+                  "descripcion": "URL prefirmada",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "api",
+                  "destino": "cola",
+                  "descripcion": "publica",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "api",
+                  "destino": "kms",
+                  "descripcion": "firma",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "aud",
+                  "destino": "cola",
+                  "descripcion": "consume",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "aud",
+                  "destino": "s3worm",
+                  "descripcion": "PutObject",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "aud",
+                  "destino": "athena",
+                  "descripcion": "consulta",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "job",
+                  "destino": "aurora",
+                  "descripcion": "escribe la vista",
+                  "routing": "orthogonal"
+                }
+              ],
+              "x": 30,
+              "y": 170,
+              "width": 1180,
+              "height": 540,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [
+            "Juan Camilo Martínez"
+          ],
+          "notas": "",
+          "transcript": "",
+          "source_docs": [
+            {
+              "nombre": "Caso de uso del taller.pdf",
+              "texto": "1. Enunciado del caso de negocio\nCliente: RedSalud Andina, una red de 14 centros de atención primaria en zonas rurales de tres provincias.\nSituación actual. Cada centro agenda por teléfono y en cuadernos; las historias clínicas viven en un sistema legado on-premise que solo responde en horario de oficina. Un paciente que necesita una interconsulta con un especialista debe viajar entre 2 y 6 horas hasta la capital provincial. El 38 % de las interconsultas se pierde por falta de seguimiento y no existe trazabilidad de quién vio qué documento clínico.\nNecesidad de negocio. Habilitar teleconsultas de especialidad entre los centros rurales y 9 especialistas itinerantes, con agenda unificada, videoconsulta, receta electrónica y seguimiento del paciente, sin reemplazar el sistema legado en el primer año.\nRestricciones declaradas por el cliente:\n- Presupuesto de nube acotado y preferencia por servicios gestionados en AWS.\n- El legado no puede modificarse; solo expone una API SOAP nocturna y una base de datos de solo lectura.\n- Regulación: los datos clínicos no pueden salir del país y toda lectura de historia clínica debe quedar auditada.\n- Conectividad intermitente en 5 de los 14 centros (enlaces de 2 Mbps con cortes diarios).\n\n3. Requisitos funcionales (RF)\nRF-01 Registrar y autenticar pacientes, médicos rurales y especialistas con roles diferenciados — Todos\nRF-02 Publicar la agenda de los 9 especialistas y permitir reserva de cupos desde cualquier centro — Médico rural\nRF-03 Sostener la videoconsulta con sala de espera, admisión y registro de asistencia — Paciente / Especialista\nRF-04 Adjuntar exámenes e imágenes al episodio de teleconsulta — Médico rural\nRF-05 Emitir receta electrónica firmada y enviarla a la farmacia del centro — Especialista\nRF-06 Consultar el historial clínico del legado en modo lectura — Especialista\nRF-07 Registrar la interconsulta con su estado (solicitada, agendada, atendida, cerrada) y alertar sobre pendientes — Gestor de red\nRF-08 Auditar todo acceso a datos clínicos con usuario, fecha, recurso y motivo — Auditoría\nRF-09 Operar en modo degradado (registro local y sincronización posterior) cuando el enlace cae — Médico rural\nRF-10 Reportar indicadores de uso: teleconsultas por centro, tiempo de espera, tasa de cierre — Gestor de red\n\n4. Matriz de requisitos de calidad (RNF -> atributos)\nDisponibilidad | El enlace de un centro rural cae durante una teleconsulta | Continuidad de registro local; 0 pérdida de datos; sincronización <= 15 min tras reconexión | RF-09, RF-03 | Cliente offline-first con cola de eventos; API idempotente\nDisponibilidad | Falla un nodo de cómputo en horario de atención | Servicio disponible >= 99,5 % mensual | RF-02, RF-03, RF-05 | Multi-AZ, auto scaling, health checks\nRendimiento | Un especialista abre el historial de un paciente | p95 <= 2 s con caché; <= 6 s en consulta al legado | RF-06 | Capa anticorrupción + caché de lectura (CQRS)\nRendimiento | Pico de 40 teleconsultas simultáneas | Latencia de señalización <= 300 ms; video sin servidor propio | RF-03 | Servicio gestionado de video (WebRTC)\nSeguridad | Un usuario sin rol clínico intenta leer una historia clínica | Denegación 100 % + registro de auditoría | RF-08, RF-06 | Autorización por rol y atributo; cifrado en tránsito y reposo; KMS\nSeguridad | Acceso a datos clínicos desde fuera del país | Bloqueo por política; residencia de datos garantizada | RF-08 | Región única, políticas de residencia, sin réplicas externas\nMantenibilidad | Cambiar la fuente del legado (nuevo proveedor) | Cambio aislado en <= 1 módulo, sin tocar dominio | RF-06 | Patrón anticorrupción como adaptador\nMantenibilidad | Incorporar un nuevo canal (app móvil del paciente) | Reutilizar >= 80 % de los servicios de dominio | RF-01, RF-02 | Monolito modular con límites explícitos por contexto\nMantenibilidad | Desplegar un cambio sin ventana de mantenimiento | Despliegue automatizado, rollback <= 10 min | Todos | CI/CD, infraestructura como código, observabilidad\n\n5. Decisiones que el participante debe abordar\n- Monolito modular vs. microservicios. Con 14 centros, 9 especialistas y un equipo pequeño, el punto de partida razonable es un monolito modular con contextos delimitados (agenda, episodio clínico, receta, auditoría, integración legado) y extraer solo lo que exija un atributo de calidad distinto — por ejemplo, la señalización de video o la ingesta de auditoría.\n- Frontera con el legado. Definir el adaptador anticorrupción y decidir si el historial se lee en tiempo real o se materializa en una vista de lectura propia.\n- Estrategia offline-first. Alcance del modo degradado: qué se puede registrar sin conexión y cómo se resuelven conflictos al sincronizar.\n- Residencia y auditoría. Dónde vive el dato clínico, quién puede leerlo y cómo se prueba la auditoría (no basta con registrarla: hay que poder demostrarla).\n- Elección de servicios AWS. Traducir cada atributo a un servicio concreto (cómputo, base de datos, colas, identidad, cifrado, observabilidad) y justificar la elección frente a la alternativa gestionada vs. autogestionada.\n- Arquitectura lógica, física y de despliegue. Producir las tres vistas diferenciadas, tal como exige el objetivo 3 del taller.\n\n6. Preguntas guía para la resolución de dudas\n- ¿Cuál de los diez RF, si fallara, rompe el negocio? Ese es el candidato a mayor inversión en disponibilidad.\n- ¿Qué requisito de calidad es táctico (se resuelve con configuración) y cuál es estructural (obliga a cambiar el diseño)?\n- ¿Qué parte del sistema puede vivir con consistencia eventual y qué parte no?\n- ¿Qué decisión tomarías distinto si el cliente duplicara el presupuesto? ¿Y si lo redujera a la mitad?\n- ¿Qué evidencia dejarías en el repositorio para demostrar que la auditoría funciona?\n\n7. Checklist de decisiones (entregables)\n- Diagrama de contexto con los sistemas externos: legado clínico, pasarela de video, farmacia, identidad, auditoría.\n- Componentes principales agrupados por contexto delimitado, con su responsabilidad en una línea.\n- Matriz de requisitos de calidad con métrica y decisión asociada (secciones 3 y 4 de este documento).\n- Postura explícita sobre monolito modular vs. microservicios, con el criterio que la sostiene.\n- Tres vistas diferenciadas: lógica, física y de despliegue.\n- Artefactos del agente generados y versionados: drivers, riesgos, propuesta técnica y al menos un ADR por decisión estructural.\n- Exportación del proyecto en Mermaid, Markdown o PDF como entregable del módulo.",
+              "origen": "PDF del taller (Diplomado, Módulo 2) — transcrito de la imagen escaneada"
+            }
+          ]
+        },
+        "createdAt": "2026-11-06T20:00:00.000Z"
+      }
+    ],
+    "activeViewId": "design",
+    "injectedViewIds": [],
+    "openViewIds": [
+      "bdd9d689-4cce-4081-9590-82e277fa10b5",
+      "ebed0005-9136-44d7-a3fa-fd1091f320d0",
+      "a1b2c3d4-2222-4aaa-8aaa-000000000002",
+      "a1b2c3d4-3333-4aaa-8aaa-000000000003"
+    ]
+  }
+}
