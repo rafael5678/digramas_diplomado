@@ -1,0 +1,1343 @@
+{
+  "formato": "processflow-board/v1",
+  "proyecto": {
+    "nombre_proyecto": "RedSalud Andina · Esqueleto Spring Boot",
+    "version": "1.2.0",
+    "notation": "c4",
+    "fecha_analisis": "2026-11-14",
+    "big_picture": {
+      "descripcion": "Siete módulos definidos desde el caso RedSalud Andina. Cada uno escribe un solo dato. Entre ellos solo circulan eventos.",
+      "hotspots": [
+        "RF-03 y RF-04 viven en Teleconsulta: el examen pertenece a la visita. El video lo resuelve Chime, fuera del módulo.",
+        "RF-09 (sin señal) y RF-10 (indicadores) no son módulos de esta sesión.",
+        "El JOIN de Agenda con Teleconsulta para reservar un cupo tiene que fallar el build. El aviso correcto es CupoReservado."
+      ],
+      "nodos": [
+        {
+          "id": "ext-cognito",
+          "nombre": "Amazon Cognito",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Servicio de identidad. Solo lo usa el módulo Acceso.",
+          "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+          "metadata": [
+            {
+              "clave": "papel",
+              "valor": "Identidad gestionada",
+              "tipo": "texto"
+            },
+            {
+              "clave": "lo_usa",
+              "valor": "Acceso",
+              "tipo": "texto"
+            }
+          ],
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": [
+            "Cognito"
+          ],
+          "x": 160,
+          "y": 16,
+          "width": 240,
+          "height": 104
+        },
+        {
+          "id": "ext-farmacia",
+          "nombre": "Farmacia del centro",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Recibe la receta firmada. No lee las tablas clínicas.",
+          "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+          "metadata": [
+            {
+              "clave": "papel",
+              "valor": "Destino de la receta",
+              "tipo": "texto"
+            },
+            {
+              "clave": "lo_usa",
+              "valor": "Receta, con el evento RecetaFirmada",
+              "tipo": "texto"
+            }
+          ],
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": [
+            "SQS"
+          ],
+          "x": 1090,
+          "y": 16,
+          "width": 240,
+          "height": 104
+        },
+        {
+          "id": "ext-legado",
+          "nombre": "Legado clínico",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Sistema viejo de solo lectura. Solo lo consulta Historial.",
+          "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+          "metadata": [
+            {
+              "clave": "papel",
+              "valor": "Fuente de verdad del historial",
+              "tipo": "texto"
+            },
+            {
+              "clave": "lo_usa",
+              "valor": "Solo el módulo Historial",
+              "tipo": "texto"
+            }
+          ],
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": [
+            "SOAP"
+          ],
+          "x": 160,
+          "y": 700,
+          "width": 240,
+          "height": 104
+        },
+        {
+          "id": "ext-analitica",
+          "nombre": "Indicadores",
+          "tipo_elemento": "Sistema Externo",
+          "descripcion": "Cifras de uso, fuera del monolito. No lee las tablas vivas.",
+          "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+          "metadata": [
+            {
+              "clave": "papel",
+              "valor": "Lectura de indicadores, fuera del monolito",
+              "tipo": "texto"
+            },
+            {
+              "clave": "lo_usa",
+              "valor": "Nadie de los siete módulos le escribe",
+              "tipo": "texto"
+            }
+          ],
+          "estado_comparativo": "nuevo",
+          "tags_tecnologia": [
+            "Athena",
+            "S3"
+          ],
+          "x": 1090,
+          "y": 700,
+          "width": 240,
+          "height": 104
+        }
+      ],
+      "aristas": [
+        {
+          "fuente": "mod-acceso",
+          "destino": "ext-cognito",
+          "descripcion": "identidad [OIDC]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-receta",
+          "destino": "ext-farmacia",
+          "descripcion": "evento RecetaFirmada [SQS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-historial",
+          "destino": "ext-legado",
+          "descripcion": "copia nocturna [SOAP]",
+          "routing": "orthogonal",
+          "dashed": true
+        }
+      ]
+    },
+    "agregados": [
+      {
+        "nombre_agregado": "Monolito modular Spring Boot",
+        "entidad_raiz": "Monolito modular Spring Boot",
+        "descripcion": "Un proceso y siete paquetes. Cinco esquemas en Aurora. Acceso usa Cognito. Auditoría usa un archivo que no se borra. La aplicación que arranca el proceso no cuenta como módulo.",
+        "nodos": [
+          {
+            "id": "mod-acceso",
+            "nombre": "Acceso",
+            "tipo_elemento": "Componente",
+            "descripcion": "Define quién entra y con qué rol. No guarda cupos ni historias.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-01",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.acceso",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Persona, rol y atributos (centro, especialidad)",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "Cognito + DynamoDB. Sin tablas en Aurora.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "Perfil",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Fuerte",
+                "tipo": "texto"
+              },
+              {
+                "clave": "habla_con",
+                "valor": "Solo con Cognito. No llama a los otros seis.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "No decide si un cupo está libre ni si una receta vale.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Cognito",
+              "DynamoDB"
+            ],
+            "x": 160,
+            "y": 185,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-agenda",
+            "nombre": "Agenda",
+            "tipo_elemento": "Componente",
+            "descripcion": "Publica los cupos de los 9 especialistas y evita la doble reserva.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-02",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.agenda",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Cupo y reserva",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "Esquema Aurora agenda",
+                "tipo": "texto"
+              },
+              {
+                "clave": "flyway",
+                "valor": "db/migration/agenda/V1__cupo.sql",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "Cupo, con @Version",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Fuerte. Cero cupos duplicados.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "publica",
+                "valor": "CupoReservado",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "No lee la tabla de la teleconsulta. Un JOIN aquí rompe el build.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Aurora PostgreSQL",
+              "Flyway"
+            ],
+            "x": 470,
+            "y": 185,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-teleconsulta",
+            "nombre": "Teleconsulta",
+            "tipo_elemento": "Componente",
+            "descripcion": "Registra la visita, la asistencia y los exámenes adjuntos.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-03 y RF-04",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.teleconsulta",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Episodio, asistencia y ficha del adjunto",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "Esquema Aurora teleconsulta. El archivo del examen va a S3 cifrado.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "flyway",
+                "valor": "db/migration/teleconsulta/V1__episodio.sql",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "Episodio, con @Version. Asistencia y Adjunto van dentro.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Fuerte dentro de la visita.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "publica",
+                "valor": "ConsultaCerrada",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "No reserva cupos, no firma recetas y no opera el servidor de video.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Aurora PostgreSQL",
+              "Amazon S3",
+              "Flyway"
+            ],
+            "x": 780,
+            "y": 185,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-receta",
+            "nombre": "Receta",
+            "tipo_elemento": "Componente",
+            "descripcion": "Guarda la receta firmada y avisa a la farmacia por una cola.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-05",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.receta",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Receta firmada",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "Esquema Aurora receta. La salida a farmacia es una cola SQS.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "flyway",
+                "valor": "db/migration/receta/V1__receta.sql",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "Receta, con @Version",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Fuerte en la firma. Eventual hacia la farmacia.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "publica",
+                "valor": "RecetaFirmada",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "No escribe en el esquema de Teleconsulta ni en el de Agenda.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Aurora PostgreSQL",
+              "SQS",
+              "Flyway"
+            ],
+            "x": 1090,
+            "y": 185,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-interconsulta",
+            "nombre": "Interconsulta",
+            "tipo_elemento": "Componente",
+            "descripcion": "Lleva el estado de solicitada a cerrada y alerta las pendientes.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-07",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.interconsulta",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Estado de la interconsulta y alerta de pendientes",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "Esquema Aurora interconsulta",
+                "tipo": "texto"
+              },
+              {
+                "clave": "flyway",
+                "valor": "db/migration/interconsulta/V1__estado.sql",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "Interconsulta, con @Version",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Fuerte",
+                "tipo": "texto"
+              },
+              {
+                "clave": "escucha",
+                "valor": "CupoReservado (pasa a agendada) y ConsultaCerrada (pasa a atendida)",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "No actualiza las tablas de Agenda ni las de Teleconsulta.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Aurora PostgreSQL",
+              "Flyway"
+            ],
+            "x": 470,
+            "y": 410,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-historial",
+            "nombre": "Historial",
+            "tipo_elemento": "Componente",
+            "descripcion": "Guarda la copia de lectura del legado, con fecha de vigencia.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-06",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.historial",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Copia de lectura del historial, con fecha de vigencia",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "Esquema Aurora historial. El legado sigue siendo la fuente de verdad.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "flyway",
+                "valor": "db/migration/historial/V1__copia_lectura.sql",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "HistorialLectura",
+                "tipo": "texto"
+              },
+              {
+                "clave": "puerto",
+                "valor": "HistorialClinicoPort. El adaptador SOAP vive solo en este paquete.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Eventual. La pantalla muestra qué tan fresca está la copia.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "No modifica el legado y no presta sus tablas para que otro módulo escriba.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Aurora PostgreSQL",
+              "Flyway"
+            ],
+            "x": 160,
+            "y": 410,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-auditoria",
+            "nombre": "Auditoría",
+            "tipo_elemento": "Componente",
+            "descripcion": "Archiva quién vio cada documento, sin modificar la atención.",
+            "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+            "metadata": [
+              {
+                "clave": "resuelve",
+                "valor": "RF-08",
+                "tipo": "texto"
+              },
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.auditoria",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato_propio",
+                "valor": "Evento de acceso: usuario, fecha, recurso, motivo",
+                "tipo": "texto"
+              },
+              {
+                "clave": "almacen",
+                "valor": "S3 Object Lock, modo compliance. Sin esquema Aurora.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "flyway",
+                "valor": "No aplica.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "agregado",
+                "valor": "AccesoClinico",
+                "tipo": "texto"
+              },
+              {
+                "clave": "consistencia",
+                "valor": "Inmutable. Se agrega, no se corrige.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "escucha",
+                "valor": "AccesoClinico, publicado por los otros seis.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "no_hace",
+                "valor": "Nadie lee este archivo para decidir un cupo, una receta o un estado.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "S3 Object Lock"
+            ],
+            "x": 1090,
+            "y": 410,
+            "width": 240,
+            "height": 104
+          }
+        ],
+        "aristas": [
+          {
+            "fuente": "mod-agenda",
+            "destino": "mod-interconsulta",
+            "descripcion": "evento CupoReservado",
+            "routing": "orthogonal"
+          },
+          {
+            "fuente": "mod-teleconsulta",
+            "destino": "mod-interconsulta",
+            "descripcion": "evento ConsultaCerrada",
+            "routing": "orthogonal"
+          },
+          {
+            "fuente": "mod-acceso",
+            "destino": "mod-auditoria",
+            "descripcion": "evento AccesoClinico",
+            "routing": "orthogonal",
+            "dashed": true
+          },
+          {
+            "fuente": "mod-agenda",
+            "destino": "mod-auditoria",
+            "descripcion": "evento AccesoClinico",
+            "routing": "orthogonal",
+            "dashed": true
+          },
+          {
+            "fuente": "mod-teleconsulta",
+            "destino": "mod-auditoria",
+            "descripcion": "evento AccesoClinico",
+            "routing": "orthogonal",
+            "dashed": true
+          },
+          {
+            "fuente": "mod-receta",
+            "destino": "mod-auditoria",
+            "descripcion": "evento AccesoClinico",
+            "routing": "orthogonal",
+            "dashed": true
+          },
+          {
+            "fuente": "mod-interconsulta",
+            "destino": "mod-auditoria",
+            "descripcion": "evento AccesoClinico",
+            "routing": "orthogonal",
+            "dashed": true
+          },
+          {
+            "fuente": "mod-historial",
+            "destino": "mod-auditoria",
+            "descripcion": "evento AccesoClinico",
+            "routing": "orthogonal",
+            "dashed": true
+          }
+        ],
+        "x": 130,
+        "y": 145,
+        "width": 1280,
+        "height": 520,
+        "tipo_contenedor": "Límite de Sistema",
+        "estado_comparativo": "nuevo",
+        "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1."
+      }
+    ],
+    "read_models": [],
+    "politicas_inter_agregados": [],
+    "responsables": [
+      "Juan Camilo Martínez"
+    ],
+    "notas": "Cómo definimos los siete módulos\n\nPartimos del caso RedSalud Andina, no de una lista previa. El caso pide diez cosas (RF-01 a RF-10). Un módulo, para esta sesión, es un paquete de Spring que es dueño de un dato y es el único que lo escribe. Con esa regla salen siete. Los otros tres requisitos se resuelven al lado, y abajo queda dicho por qué.\n\nLos siete, en una frase\n1. Acceso. Quién entra y con qué rol. RF-01.\n2. Agenda. Los cupos de los 9 especialistas, sin doble reserva. RF-02.\n3. Teleconsulta. La visita: asistencia y exámenes adjuntos. RF-03 y RF-04 van juntos porque el examen no existe sin la visita.\n4. Receta. El documento firmado y el aviso a la farmacia. RF-05.\n5. Interconsulta. El estado solicitada → agendada → atendida → cerrada, que es el seguimiento que hoy se pierde (38 %). RF-07.\n6. Historial. La copia de lectura del sistema viejo, traducida por un solo adaptador. RF-06.\n7. Auditoría. El registro de quién vio cada documento. RF-08.\n\nPor qué juntamos RF-03 y RF-04\nLa videoconsulta y los adjuntos son la misma visita. Separarlos obligaría a cruzar tablas para saber qué examen corresponde a qué paciente. El video en sí no entra al módulo: el caso exige video sin servidor propio, y eso lo resuelve Chime, fuera del código.\n\nQué dejamos fuera, a propósito\n- El modo sin señal (RF-09) no es dueño de un dato nuevo. Es la forma en que el centro guarda la visita y la reenvía. Se construye en la sesión 3, sobre Teleconsulta, con un identificador creado en el centro. Meterlo como octavo módulo en la sesión 1 mezcla dos sesiones.\n- Los indicadores (RF-10) no se calculan sobre las tablas vivas. Van a una réplica o a Athena. Por eso el cuadro Indicadores está fuera del recuadro y no tiene flecha de lectura hacia Interconsulta.\n- Chime no es un módulo. Es el servicio de video.\n\nCómo se hablan\nLa flecha continua es un aviso. Quien lo publica no abre la tabla del otro.\n- Agenda avisa CupoReservado. Interconsulta pasa a agendada.\n- Teleconsulta avisa ConsultaCerrada. Interconsulta pasa a atendida.\n- Receta avisa RecetaFirmada. La farmacia lo recibe por SQS.\n- Los seis primeros avisan AccesoClinico. Solo Auditoría lo archiva.\nUn id de otro módulo se guarda como código (UUID). No hay llave foránea ni @ManyToOne entre paquetes.\n\nDentro de cada paquete, siempre igual\napi           lo que otro módulo tiene permiso de nombrar (el evento o el puerto)\ndomain        las reglas de este dato\napplication   el caso de uso\npersistence   las tablas de este esquema, y de nadie más\nweb           las rutas HTTP de este módulo\n\nLa clase RedSaludApplication, en com.redsalud.andina, solo enciende el proceso. No es un octavo módulo y no tiene tablas.\n\nTablas\nUn solo Aurora, en una región, con un esquema por dueño: agenda, teleconsulta, receta, interconsulta, historial. Cada uno con su carpeta Flyway. Acceso no usa Aurora. Auditoría tampoco: escribe en S3 Object Lock.\n\nLo que el test de la sesión 1 tiene que rechazar\n- Reservar un cupo leyendo a la vez la tabla de Agenda y la de Teleconsulta.\n- Una entidad de un paquete con @ManyToOne hacia una entidad de otro.\n- Inyectar el repositorio de un módulo en otro módulo.\n- Importar el XML del legado desde Teleconsulta, Receta o Interconsulta. Ese XML solo existe dentro de Historial.\n\nADR-001. Límites\nDejamos los siete dentro de un solo Spring Boot. El equipo es pequeño, son 14 centros y 9 especialistas, y el caso pide reutilizar el dominio si mañana hay otra aplicación.\nLa primera que se sacaría del proceso es Auditoría: su archivo no se puede borrar y no vive en Aurora, así que su ciclo de vida ya es distinto. Hoy se queda dentro para que el límite se vea en el código, no solo en el dibujo.\nCambiar el proveedor del legado, el día de mañana, toca solo el paquete historial.\n",
+    "transcript": ""
+  },
+  "vistas": {
+    "customViews": [
+      {
+        "id": "c4d5e6f7-1111-4aaa-8aaa-000000000011",
+        "name": "Esqueleto Spring Boot",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · Esqueleto Spring Boot",
+          "version": "1.2.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-11-14",
+          "big_picture": {
+            "descripcion": "Siete módulos definidos desde el caso RedSalud Andina. Cada uno escribe un solo dato. Entre ellos solo circulan eventos.",
+            "hotspots": [
+              "RF-03 y RF-04 viven en Teleconsulta: el examen pertenece a la visita. El video lo resuelve Chime, fuera del módulo.",
+              "RF-09 (sin señal) y RF-10 (indicadores) no son módulos de esta sesión.",
+              "El JOIN de Agenda con Teleconsulta para reservar un cupo tiene que fallar el build. El aviso correcto es CupoReservado."
+            ],
+            "nodos": [
+              {
+                "id": "ext-cognito",
+                "nombre": "Amazon Cognito",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Servicio de identidad. Solo lo usa el módulo Acceso.",
+                "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                "metadata": [
+                  {
+                    "clave": "papel",
+                    "valor": "Identidad gestionada",
+                    "tipo": "texto"
+                  },
+                  {
+                    "clave": "lo_usa",
+                    "valor": "Acceso",
+                    "tipo": "texto"
+                  }
+                ],
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Cognito"
+                ],
+                "x": 160,
+                "y": 16,
+                "width": 240,
+                "height": 104
+              },
+              {
+                "id": "ext-farmacia",
+                "nombre": "Farmacia del centro",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Recibe la receta firmada. No lee las tablas clínicas.",
+                "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                "metadata": [
+                  {
+                    "clave": "papel",
+                    "valor": "Destino de la receta",
+                    "tipo": "texto"
+                  },
+                  {
+                    "clave": "lo_usa",
+                    "valor": "Receta, con el evento RecetaFirmada",
+                    "tipo": "texto"
+                  }
+                ],
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "SQS"
+                ],
+                "x": 1090,
+                "y": 16,
+                "width": 240,
+                "height": 104
+              },
+              {
+                "id": "ext-legado",
+                "nombre": "Legado clínico",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Sistema viejo de solo lectura. Solo lo consulta Historial.",
+                "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                "metadata": [
+                  {
+                    "clave": "papel",
+                    "valor": "Fuente de verdad del historial",
+                    "tipo": "texto"
+                  },
+                  {
+                    "clave": "lo_usa",
+                    "valor": "Solo el módulo Historial",
+                    "tipo": "texto"
+                  }
+                ],
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "SOAP"
+                ],
+                "x": 160,
+                "y": 700,
+                "width": 240,
+                "height": 104
+              },
+              {
+                "id": "ext-analitica",
+                "nombre": "Indicadores",
+                "tipo_elemento": "Sistema Externo",
+                "descripcion": "Cifras de uso, fuera del monolito. No lee las tablas vivas.",
+                "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                "metadata": [
+                  {
+                    "clave": "papel",
+                    "valor": "Lectura de indicadores, fuera del monolito",
+                    "tipo": "texto"
+                  },
+                  {
+                    "clave": "lo_usa",
+                    "valor": "Nadie de los siete módulos le escribe",
+                    "tipo": "texto"
+                  }
+                ],
+                "estado_comparativo": "nuevo",
+                "tags_tecnologia": [
+                  "Athena",
+                  "S3"
+                ],
+                "x": 1090,
+                "y": 700,
+                "width": 240,
+                "height": 104
+              }
+            ],
+            "aristas": [
+              {
+                "fuente": "mod-acceso",
+                "destino": "ext-cognito",
+                "descripcion": "identidad [OIDC]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-receta",
+                "destino": "ext-farmacia",
+                "descripcion": "evento RecetaFirmada [SQS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-historial",
+                "destino": "ext-legado",
+                "descripcion": "copia nocturna [SOAP]",
+                "routing": "orthogonal",
+                "dashed": true
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "Monolito modular Spring Boot",
+              "entidad_raiz": "Monolito modular Spring Boot",
+              "descripcion": "Un proceso y siete paquetes. Cinco esquemas en Aurora. Acceso usa Cognito. Auditoría usa un archivo que no se borra. La aplicación que arranca el proceso no cuenta como módulo.",
+              "nodos": [
+                {
+                  "id": "mod-acceso",
+                  "nombre": "Acceso",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Define quién entra y con qué rol. No guarda cupos ni historias.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-01",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.acceso",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Persona, rol y atributos (centro, especialidad)",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "Cognito + DynamoDB. Sin tablas en Aurora.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "Perfil",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Fuerte",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "habla_con",
+                      "valor": "Solo con Cognito. No llama a los otros seis.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "No decide si un cupo está libre ni si una receta vale.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Cognito",
+                    "DynamoDB"
+                  ],
+                  "x": 160,
+                  "y": 185,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-agenda",
+                  "nombre": "Agenda",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Publica los cupos de los 9 especialistas y evita la doble reserva.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-02",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.agenda",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Cupo y reserva",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "Esquema Aurora agenda",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "flyway",
+                      "valor": "db/migration/agenda/V1__cupo.sql",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "Cupo, con @Version",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Fuerte. Cero cupos duplicados.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "publica",
+                      "valor": "CupoReservado",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "No lee la tabla de la teleconsulta. Un JOIN aquí rompe el build.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "Flyway"
+                  ],
+                  "x": 470,
+                  "y": 185,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-teleconsulta",
+                  "nombre": "Teleconsulta",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Registra la visita, la asistencia y los exámenes adjuntos.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-03 y RF-04",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.teleconsulta",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Episodio, asistencia y ficha del adjunto",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "Esquema Aurora teleconsulta. El archivo del examen va a S3 cifrado.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "flyway",
+                      "valor": "db/migration/teleconsulta/V1__episodio.sql",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "Episodio, con @Version. Asistencia y Adjunto van dentro.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Fuerte dentro de la visita.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "publica",
+                      "valor": "ConsultaCerrada",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "No reserva cupos, no firma recetas y no opera el servidor de video.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "Amazon S3",
+                    "Flyway"
+                  ],
+                  "x": 780,
+                  "y": 185,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-receta",
+                  "nombre": "Receta",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Guarda la receta firmada y avisa a la farmacia por una cola.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-05",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.receta",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Receta firmada",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "Esquema Aurora receta. La salida a farmacia es una cola SQS.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "flyway",
+                      "valor": "db/migration/receta/V1__receta.sql",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "Receta, con @Version",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Fuerte en la firma. Eventual hacia la farmacia.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "publica",
+                      "valor": "RecetaFirmada",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "No escribe en el esquema de Teleconsulta ni en el de Agenda.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "SQS",
+                    "Flyway"
+                  ],
+                  "x": 1090,
+                  "y": 185,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-interconsulta",
+                  "nombre": "Interconsulta",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Lleva el estado de solicitada a cerrada y alerta las pendientes.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-07",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.interconsulta",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Estado de la interconsulta y alerta de pendientes",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "Esquema Aurora interconsulta",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "flyway",
+                      "valor": "db/migration/interconsulta/V1__estado.sql",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "Interconsulta, con @Version",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Fuerte",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "escucha",
+                      "valor": "CupoReservado (pasa a agendada) y ConsultaCerrada (pasa a atendida)",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "No actualiza las tablas de Agenda ni las de Teleconsulta.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "Flyway"
+                  ],
+                  "x": 470,
+                  "y": 410,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-historial",
+                  "nombre": "Historial",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Guarda la copia de lectura del legado, con fecha de vigencia.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-06",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Copia de lectura del historial, con fecha de vigencia",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "Esquema Aurora historial. El legado sigue siendo la fuente de verdad.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "flyway",
+                      "valor": "db/migration/historial/V1__copia_lectura.sql",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "HistorialLectura",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "puerto",
+                      "valor": "HistorialClinicoPort. El adaptador SOAP vive solo en este paquete.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Eventual. La pantalla muestra qué tan fresca está la copia.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "No modifica el legado y no presta sus tablas para que otro módulo escriba.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "Flyway"
+                  ],
+                  "x": 160,
+                  "y": 410,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-auditoria",
+                  "nombre": "Auditoría",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Archiva quién vio cada documento, sin modificar la atención.",
+                  "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1.",
+                  "metadata": [
+                    {
+                      "clave": "resuelve",
+                      "valor": "RF-08",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.auditoria",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato_propio",
+                      "valor": "Evento de acceso: usuario, fecha, recurso, motivo",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "almacen",
+                      "valor": "S3 Object Lock, modo compliance. Sin esquema Aurora.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "flyway",
+                      "valor": "No aplica.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "agregado",
+                      "valor": "AccesoClinico",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "consistencia",
+                      "valor": "Inmutable. Se agrega, no se corrige.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "escucha",
+                      "valor": "AccesoClinico, publicado por los otros seis.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "no_hace",
+                      "valor": "Nadie lee este archivo para decidir un cupo, una receta o un estado.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "S3 Object Lock"
+                  ],
+                  "x": 1090,
+                  "y": 410,
+                  "width": 240,
+                  "height": 104
+                }
+              ],
+              "aristas": [
+                {
+                  "fuente": "mod-agenda",
+                  "destino": "mod-interconsulta",
+                  "descripcion": "evento CupoReservado",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "mod-teleconsulta",
+                  "destino": "mod-interconsulta",
+                  "descripcion": "evento ConsultaCerrada",
+                  "routing": "orthogonal"
+                },
+                {
+                  "fuente": "mod-acceso",
+                  "destino": "mod-auditoria",
+                  "descripcion": "evento AccesoClinico",
+                  "routing": "orthogonal",
+                  "dashed": true
+                },
+                {
+                  "fuente": "mod-agenda",
+                  "destino": "mod-auditoria",
+                  "descripcion": "evento AccesoClinico",
+                  "routing": "orthogonal",
+                  "dashed": true
+                },
+                {
+                  "fuente": "mod-teleconsulta",
+                  "destino": "mod-auditoria",
+                  "descripcion": "evento AccesoClinico",
+                  "routing": "orthogonal",
+                  "dashed": true
+                },
+                {
+                  "fuente": "mod-receta",
+                  "destino": "mod-auditoria",
+                  "descripcion": "evento AccesoClinico",
+                  "routing": "orthogonal",
+                  "dashed": true
+                },
+                {
+                  "fuente": "mod-interconsulta",
+                  "destino": "mod-auditoria",
+                  "descripcion": "evento AccesoClinico",
+                  "routing": "orthogonal",
+                  "dashed": true
+                },
+                {
+                  "fuente": "mod-historial",
+                  "destino": "mod-auditoria",
+                  "descripcion": "evento AccesoClinico",
+                  "routing": "orthogonal",
+                  "dashed": true
+                }
+              ],
+              "x": 130,
+              "y": 145,
+              "width": 1280,
+              "height": 520,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "Caso de uso RedSalud Andina · RF-01 a RF-10. Definición propia para la sesión 1."
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [
+            "Juan Camilo Martínez"
+          ],
+          "notas": "Cómo definimos los siete módulos\n\nPartimos del caso RedSalud Andina, no de una lista previa. El caso pide diez cosas (RF-01 a RF-10). Un módulo, para esta sesión, es un paquete de Spring que es dueño de un dato y es el único que lo escribe. Con esa regla salen siete. Los otros tres requisitos se resuelven al lado, y abajo queda dicho por qué.\n\nLos siete, en una frase\n1. Acceso. Quién entra y con qué rol. RF-01.\n2. Agenda. Los cupos de los 9 especialistas, sin doble reserva. RF-02.\n3. Teleconsulta. La visita: asistencia y exámenes adjuntos. RF-03 y RF-04 van juntos porque el examen no existe sin la visita.\n4. Receta. El documento firmado y el aviso a la farmacia. RF-05.\n5. Interconsulta. El estado solicitada → agendada → atendida → cerrada, que es el seguimiento que hoy se pierde (38 %). RF-07.\n6. Historial. La copia de lectura del sistema viejo, traducida por un solo adaptador. RF-06.\n7. Auditoría. El registro de quién vio cada documento. RF-08.\n\nPor qué juntamos RF-03 y RF-04\nLa videoconsulta y los adjuntos son la misma visita. Separarlos obligaría a cruzar tablas para saber qué examen corresponde a qué paciente. El video en sí no entra al módulo: el caso exige video sin servidor propio, y eso lo resuelve Chime, fuera del código.\n\nQué dejamos fuera, a propósito\n- El modo sin señal (RF-09) no es dueño de un dato nuevo. Es la forma en que el centro guarda la visita y la reenvía. Se construye en la sesión 3, sobre Teleconsulta, con un identificador creado en el centro. Meterlo como octavo módulo en la sesión 1 mezcla dos sesiones.\n- Los indicadores (RF-10) no se calculan sobre las tablas vivas. Van a una réplica o a Athena. Por eso el cuadro Indicadores está fuera del recuadro y no tiene flecha de lectura hacia Interconsulta.\n- Chime no es un módulo. Es el servicio de video.\n\nCómo se hablan\nLa flecha continua es un aviso. Quien lo publica no abre la tabla del otro.\n- Agenda avisa CupoReservado. Interconsulta pasa a agendada.\n- Teleconsulta avisa ConsultaCerrada. Interconsulta pasa a atendida.\n- Receta avisa RecetaFirmada. La farmacia lo recibe por SQS.\n- Los seis primeros avisan AccesoClinico. Solo Auditoría lo archiva.\nUn id de otro módulo se guarda como código (UUID). No hay llave foránea ni @ManyToOne entre paquetes.\n\nDentro de cada paquete, siempre igual\napi           lo que otro módulo tiene permiso de nombrar (el evento o el puerto)\ndomain        las reglas de este dato\napplication   el caso de uso\npersistence   las tablas de este esquema, y de nadie más\nweb           las rutas HTTP de este módulo\n\nLa clase RedSaludApplication, en com.redsalud.andina, solo enciende el proceso. No es un octavo módulo y no tiene tablas.\n\nTablas\nUn solo Aurora, en una región, con un esquema por dueño: agenda, teleconsulta, receta, interconsulta, historial. Cada uno con su carpeta Flyway. Acceso no usa Aurora. Auditoría tampoco: escribe en S3 Object Lock.\n\nLo que el test de la sesión 1 tiene que rechazar\n- Reservar un cupo leyendo a la vez la tabla de Agenda y la de Teleconsulta.\n- Una entidad de un paquete con @ManyToOne hacia una entidad de otro.\n- Inyectar el repositorio de un módulo en otro módulo.\n- Importar el XML del legado desde Teleconsulta, Receta o Interconsulta. Ese XML solo existe dentro de Historial.\n\nADR-001. Límites\nDejamos los siete dentro de un solo Spring Boot. El equipo es pequeño, son 14 centros y 9 especialistas, y el caso pide reutilizar el dominio si mañana hay otra aplicación.\nLa primera que se sacaría del proceso es Auditoría: su archivo no se puede borrar y no vive en Aurora, así que su ciclo de vida ya es distinto. Hoy se queda dentro para que el límite se vea en el código, no solo en el dibujo.\nCambiar el proveedor del legado, el día de mañana, toca solo el paquete historial.\n",
+          "transcript": ""
+        },
+        "createdAt": "2026-11-14T15:20:00.000Z"
+      }
+    ],
+    "activeViewId": "c4d5e6f7-1111-4aaa-8aaa-000000000011",
+    "injectedViewIds": [],
+    "openViewIds": [
+      "c4d5e6f7-1111-4aaa-8aaa-000000000011"
+    ]
+  }
+}
