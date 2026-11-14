@@ -65,7 +65,7 @@
         },
         {
           "id": "ext-legacy",
-          "nombre": "Sistema legado clínico",
+          "nombre": "Legado clínico",
           "tipo_elemento": "Sistema Externo",
           "descripcion": "SOAP nocturno y BD de solo lectura; no se modifica (RF-06)",
           "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -115,7 +115,7 @@
         },
         {
           "id": "ext-indicadores",
-          "nombre": "Vista de indicadores",
+          "nombre": "Indicadores",
           "tipo_elemento": "Sistema Externo",
           "descripcion": "Proyecciones para reportes: espera, atención, cierre (RF-10)",
           "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -198,7 +198,7 @@
         "nodos": [
           {
             "id": "mod-identidad",
-            "nombre": "Acceso e identidad",
+            "nombre": "Acceso",
             "tipo_elemento": "Componente",
             "descripcion": "RF-01 · políticas por rol, centro, especialidad y relación",
             "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -273,7 +273,7 @@
           },
           {
             "id": "mod-episodio",
-            "nombre": "Episodio / Teleconsulta",
+            "nombre": "Teleconsulta",
             "tipo_elemento": "Componente",
             "descripcion": "RF-03/04 · visita, asistencia, video y adjuntos",
             "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -323,7 +323,7 @@
           },
           {
             "id": "mod-acl",
-            "nombre": "Integración legado (ACL)",
+            "nombre": "Historial",
             "tipo_elemento": "Componente",
             "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
             "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -560,7 +560,7 @@
               },
               {
                 "id": "ext-legacy",
-                "nombre": "Sistema legado clínico",
+                "nombre": "Legado clínico",
                 "tipo_elemento": "Sistema Externo",
                 "descripcion": "SOAP nocturno y BD de solo lectura; no se modifica (RF-06)",
                 "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -610,7 +610,7 @@
               },
               {
                 "id": "ext-indicadores",
-                "nombre": "Vista de indicadores",
+                "nombre": "Indicadores",
                 "tipo_elemento": "Sistema Externo",
                 "descripcion": "Proyecciones para reportes: espera, atención, cierre (RF-10)",
                 "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -693,7 +693,7 @@
               "nodos": [
                 {
                   "id": "mod-identidad",
-                  "nombre": "Acceso e identidad",
+                  "nombre": "Acceso",
                   "tipo_elemento": "Componente",
                   "descripcion": "RF-01 · políticas por rol, centro, especialidad y relación",
                   "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -768,7 +768,7 @@
                 },
                 {
                   "id": "mod-episodio",
-                  "nombre": "Episodio / Teleconsulta",
+                  "nombre": "Teleconsulta",
                   "tipo_elemento": "Componente",
                   "descripcion": "RF-03/04 · visita, asistencia, video y adjuntos",
                   "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
@@ -818,7 +818,7 @@
                 },
                 {
                   "id": "mod-acl",
-                  "nombre": "Integración legado (ACL)",
+                  "nombre": "Historial",
                   "tipo_elemento": "Componente",
                   "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
                   "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
