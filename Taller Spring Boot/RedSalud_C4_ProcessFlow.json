@@ -2,140 +2,64 @@
   "formato": "processflow-board/v1",
   "proyecto": {
     "nombre_proyecto": "RedSalud Andina · Arquitectura C4 modular completa",
-    "version": "2.0.0",
+    "version": "1.3.0",
     "notation": "c4",
     "fecha_analisis": "2026-11-14",
     "big_picture": {
-      "descripcion": "Vista única C4 nivel 3 lógico: monolito modular Spring Boot, módulos de negocio, cliente offline-first y sistemas externos. Sin procesos BPMN.",
+      "descripcion": "Cinco fronteras: el centro rural, la API como única entrada, el monolito, los sistemas de afuera y los almacenes. Cada módulo escribe solo su dato.",
       "hotspots": [
-        "Cada módulo posee sus datos y solo expone contratos/eventos; sin JOIN o JPA entre módulos.",
-        "RF-09: cola local y recepción idempotente con UUID/ULID; cupos/recetas se validan en servidor.",
-        "RF-06: historial del legado de solo lectura, caché con frescura visible y ACL SOAP.",
-        "RF-08: autorización por rol y atributo más auditoría inmutable de cada lectura y denegación."
+        "El centro no llama a un módulo directo. Toda petición entra por la API.",
+        "La API no tiene tablas. Entrega la petición al módulo dueño.",
+        "Los almacenes quedan fuera del proceso: cada módulo escribe solo el suyo."
       ],
-      "nodos": [
-        {
-          "id": "ext-cliente",
-          "nombre": "Centro rural · PWA",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "Offline-first, UUID/ULID y cola local con reintentos (RF-09)",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "PWA",
-            "IndexedDB"
-          ],
-          "x": 30,
-          "y": 45,
-          "width": 285,
-          "height": 112
-        },
-        {
-          "id": "ext-cognito",
-          "nombre": "Amazon Cognito",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "Identidad OIDC; verificación de roles y atributos (RF-01)",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "Cognito"
-          ],
-          "x": 380,
-          "y": 45,
-          "width": 240,
-          "height": 112
-        },
-        {
-          "id": "ext-farmacia",
-          "nombre": "Farmacia del centro",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "Recibe recetas firmadas por entrega eventual (RF-05)",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "SQS"
-          ],
-          "x": 1080,
-          "y": 45,
-          "width": 265,
-          "height": 112
-        },
-        {
-          "id": "ext-legacy",
-          "nombre": "Legado clínico",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "SOAP nocturno y BD de solo lectura; no se modifica (RF-06)",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "SOAP"
-          ],
-          "x": 50,
-          "y": 770,
-          "width": 275,
-          "height": 112
-        },
-        {
-          "id": "ext-aws",
-          "nombre": "Servicios de datos AWS",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "Aurora por esquema; S3/KMS; SQS; S3 Object Lock; caché",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "Aurora PostgreSQL",
-            "S3",
-            "SQS"
-          ],
-          "x": 425,
-          "y": 770,
-          "width": 420,
-          "height": 112
-        },
-        {
-          "id": "ext-video",
-          "nombre": "Pasarela video WebRTC",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "Servicio de videollamada gestionado (RF-03)",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "WebRTC"
-          ],
-          "x": 905,
-          "y": 770,
-          "width": 240,
-          "height": 112
-        },
-        {
-          "id": "ext-indicadores",
-          "nombre": "Indicadores",
-          "tipo_elemento": "Sistema Externo",
-          "descripcion": "Proyecciones para reportes: espera, atención, cierre (RF-10)",
-          "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-          "metadata": [],
-          "estado_comparativo": "nuevo",
-          "tags_tecnologia": [
-            "Athena",
-            "S3"
-          ],
-          "x": 1195,
-          "y": 770,
-          "width": 260,
-          "height": 112
-        }
-      ],
+      "nodos": [],
       "aristas": [
         {
           "fuente": "ext-cliente",
+          "destino": "mod-api",
+          "descripcion": "única entrada [HTTPS]",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
+          "destino": "mod-identidad",
+          "descripcion": "valida el token",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
+          "destino": "mod-agenda",
+          "descripcion": "reserva el cupo",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
+          "destino": "mod-interconsulta",
+          "descripcion": "abre la solicitud",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
+          "destino": "mod-episodio",
+          "descripcion": "registra la visita",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
+          "destino": "mod-receta",
+          "descripcion": "pide la firma",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
+          "destino": "mod-acl",
+          "descripcion": "consulta el historial",
+          "routing": "orthogonal"
+        },
+        {
+          "fuente": "mod-api",
           "destino": "mod-sync",
-          "descripcion": "HTTPS + Idempotency-Key",
+          "descripcion": "entrega la cola del centro",
           "routing": "orthogonal"
         },
         {
@@ -192,9 +116,89 @@
     },
     "agregados": [
       {
-        "nombre_agregado": "Monolito modular · Spring Boot",
-        "entidad_raiz": "Monolito modular · Spring Boot",
-        "descripcion": "Una aplicación desplegable; módulos por contexto y datos propios, contratos públicos y eventos. RF-01 a RF-10. Las cajas externas no son paquetes Java.",
+        "nombre_agregado": "Centro rural",
+        "entidad_raiz": "Centro rural",
+        "descripcion": "El puesto de salud. Si no hay señal, la visita se guarda aquí y sale después hacia la API.",
+        "nodos": [
+          {
+            "id": "ext-cliente",
+            "nombre": "Centro rural · PWA",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "Habla solo con la API. Si se cae el enlace, guarda la visita y la reenvía.",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "PWA",
+              "IndexedDB"
+            ],
+            "x": 70,
+            "y": 58,
+            "width": 240,
+            "height": 104
+          }
+        ],
+        "aristas": [],
+        "x": 36,
+        "y": 20,
+        "width": 320,
+        "height": 168,
+        "tipo_contenedor": "Límite de Sistema",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+      },
+      {
+        "nombre_agregado": "Punto de entrada",
+        "entidad_raiz": "Punto de entrada",
+        "descripcion": "La única puerta del sistema. Nada de afuera cruza esta frontera sin pasar por la API.",
+        "nodos": [
+          {
+            "id": "mod-api",
+            "nombre": "API",
+            "tipo_elemento": "Componente",
+            "descripcion": "Única puerta de entrada. Valida el token y entrega la petición al módulo dueño del dato.",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.api",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato",
+                "valor": "ninguno. No tiene esquema propio.",
+                "tipo": "texto"
+              },
+              {
+                "clave": "entrada",
+                "valor": "HTTPS. Todo el centro pasa por aquí.",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Spring Web",
+              "HTTPS"
+            ],
+            "x": 620,
+            "y": 58,
+            "width": 240,
+            "height": 104
+          }
+        ],
+        "aristas": [],
+        "x": 540,
+        "y": 20,
+        "width": 400,
+        "height": 168,
+        "tipo_contenedor": "Límite de Sistema",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+      },
+      {
+        "nombre_agregado": "Monolito modular Spring Boot",
+        "entidad_raiz": "Monolito modular Spring Boot",
+        "descripcion": "Un solo proceso. Cada caja escribe su propio dato y las demás se enteran por eventos.",
         "nodos": [
           {
             "id": "mod-identidad",
@@ -216,10 +220,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 80,
-            "y": 230,
-            "width": 255,
-            "height": 100
+            "x": 70,
+            "y": 268,
+            "width": 240,
+            "height": 104
           },
           {
             "id": "mod-agenda",
@@ -241,10 +245,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 395,
-            "y": 230,
-            "width": 255,
-            "height": 100
+            "x": 350,
+            "y": 268,
+            "width": 240,
+            "height": 104
           },
           {
             "id": "mod-interconsulta",
@@ -266,10 +270,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 710,
-            "y": 230,
-            "width": 255,
-            "height": 100
+            "x": 630,
+            "y": 268,
+            "width": 240,
+            "height": 104
           },
           {
             "id": "mod-episodio",
@@ -291,60 +295,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 1025,
-            "y": 230,
-            "width": 260,
-            "height": 100
-          },
-          {
-            "id": "mod-sync",
-            "nombre": "Sincronización",
-            "tipo_elemento": "Componente",
-            "descripcion": "RF-09 · idempotencia, conflictos y reintentos",
-            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-            "metadata": [
-              {
-                "clave": "paquete",
-                "valor": "com.redsalud.andina.sincronizacion",
-                "tipo": "texto"
-              },
-              {
-                "clave": "dato",
-                "valor": "claves idempotentes y outbox",
-                "tipo": "texto"
-              }
-            ],
-            "estado_comparativo": "nuevo",
-            "tags_tecnologia": [],
-            "x": 80,
-            "y": 465,
-            "width": 255,
-            "height": 100
-          },
-          {
-            "id": "mod-acl",
-            "nombre": "Historial",
-            "tipo_elemento": "Componente",
-            "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
-            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-            "metadata": [
-              {
-                "clave": "paquete",
-                "valor": "com.redsalud.andina.historial",
-                "tipo": "texto"
-              },
-              {
-                "clave": "dato",
-                "valor": "proyección historial solo lectura",
-                "tipo": "texto"
-              }
-            ],
-            "estado_comparativo": "nuevo",
-            "tags_tecnologia": [],
-            "x": 395,
-            "y": 465,
-            "width": 255,
-            "height": 100
+            "x": 910,
+            "y": 268,
+            "width": 240,
+            "height": 104
           },
           {
             "id": "mod-receta",
@@ -366,35 +320,35 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 710,
-            "y": 465,
-            "width": 255,
-            "height": 100
+            "x": 1190,
+            "y": 268,
+            "width": 240,
+            "height": 104
           },
           {
-            "id": "mod-auditoria",
-            "nombre": "Auditoría",
+            "id": "mod-sync",
+            "nombre": "Sincronización",
             "tipo_elemento": "Componente",
-            "descripcion": "RF-08 · accesos y denegaciones; append-only",
+            "descripcion": "RF-09 · idempotencia, conflictos y reintentos",
             "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
             "metadata": [
               {
                 "clave": "paquete",
-                "valor": "com.redsalud.andina.auditoria",
+                "valor": "com.redsalud.andina.sincronizacion",
                 "tipo": "texto"
               },
               {
                 "clave": "dato",
-                "valor": "evento acceso clínico",
+                "valor": "claves idempotentes y outbox",
                 "tipo": "texto"
               }
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 1025,
-            "y": 465,
-            "width": 260,
-            "height": 100
+            "x": 350,
+            "y": 450,
+            "width": 240,
+            "height": 104
           },
           {
             "id": "mod-reportes",
@@ -416,10 +370,60 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 710,
-            "y": 620,
-            "width": 270,
-            "height": 90
+            "x": 630,
+            "y": 450,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-acl",
+            "nombre": "Historial",
+            "tipo_elemento": "Componente",
+            "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.historial",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato",
+                "valor": "proyección historial solo lectura",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [],
+            "x": 910,
+            "y": 450,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "mod-auditoria",
+            "nombre": "Auditoría",
+            "tipo_elemento": "Componente",
+            "descripcion": "RF-08 · accesos y denegaciones; append-only",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [
+              {
+                "clave": "paquete",
+                "valor": "com.redsalud.andina.auditoria",
+                "tipo": "texto"
+              },
+              {
+                "clave": "dato",
+                "valor": "evento acceso clínico",
+                "tipo": "texto"
+              }
+            ],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [],
+            "x": 1190,
+            "y": 450,
+            "width": 240,
+            "height": 104
           }
         ],
         "aristas": [
@@ -473,164 +477,217 @@
             "dashed": true
           }
         ],
-        "x": 45,
-        "y": 185,
-        "width": 1370,
-        "height": 550,
+        "x": 36,
+        "y": 214,
+        "width": 1420,
+        "height": 390,
         "tipo_contenedor": "Límite de Sistema",
         "estado_comparativo": "nuevo",
-        "fuente": "Caso RedSalud Andina y taller Spring Boot"
+        "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+      },
+      {
+        "nombre_agregado": "Sistemas externos",
+        "entidad_raiz": "Sistemas externos",
+        "descripcion": "Sistemas que no son nuestros. Se hablan desde un solo módulo y no entran a las tablas.",
+        "nodos": [
+          {
+            "id": "ext-cognito",
+            "nombre": "Amazon Cognito",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "Identidad OIDC; verificación de roles y atributos (RF-01)",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Cognito"
+            ],
+            "x": 64,
+            "y": 700,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "ext-farmacia",
+            "nombre": "Farmacia del centro",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "Recibe recetas firmadas por entrega eventual (RF-05)",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "SQS"
+            ],
+            "x": 300,
+            "y": 700,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "ext-legacy",
+            "nombre": "Legado clínico",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "SOAP nocturno y BD de solo lectura; no se modifica (RF-06)",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "SOAP"
+            ],
+            "x": 536,
+            "y": 700,
+            "width": 240,
+            "height": 104
+          },
+          {
+            "id": "ext-video",
+            "nombre": "Pasarela video WebRTC",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "Servicio de videollamada gestionado (RF-03)",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "WebRTC"
+            ],
+            "x": 772,
+            "y": 700,
+            "width": 240,
+            "height": 104
+          }
+        ],
+        "aristas": [],
+        "x": 36,
+        "y": 640,
+        "width": 1000,
+        "height": 190,
+        "tipo_contenedor": "Límite de Sistema",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+      },
+      {
+        "nombre_agregado": "Almacenes",
+        "entidad_raiz": "Almacenes",
+        "descripcion": "Los datos viven aquí, en una sola región. Cada módulo escribe solo su esquema o su archivo.",
+        "nodos": [
+          {
+            "id": "ext-aws",
+            "nombre": "Servicios de datos AWS",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "Aurora por esquema; S3/KMS; SQS; S3 Object Lock; caché",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Aurora PostgreSQL",
+              "S3",
+              "SQS"
+            ],
+            "x": 1096,
+            "y": 700,
+            "width": 170,
+            "height": 104
+          },
+          {
+            "id": "ext-indicadores",
+            "nombre": "Indicadores",
+            "tipo_elemento": "Sistema Externo",
+            "descripcion": "Proyecciones para reportes: espera, atención, cierre (RF-10)",
+            "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+            "metadata": [],
+            "estado_comparativo": "nuevo",
+            "tags_tecnologia": [
+              "Athena",
+              "S3"
+            ],
+            "x": 1280,
+            "y": 700,
+            "width": 156,
+            "height": 104
+          }
+        ],
+        "aristas": [],
+        "x": 1060,
+        "y": 640,
+        "width": 396,
+        "height": 190,
+        "tipo_contenedor": "Límite de Sistema",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
       }
     ],
     "read_models": [],
     "politicas_inter_agregados": [],
     "responsables": [],
-    "notas": "Vista C4 lógica de componentes, no BPMN. RF-01 Acceso; RF-02 Agenda; RF-03/04 Episodio; RF-05 Receta; RF-06 ACL; RF-07 Interconsulta; RF-08 Auditoría; RF-09 Sincronización; RF-10 Reportes/observabilidad. No se dibujan todas las flechas transversales para evitar saturación: toda lectura clínica pasa por autorización en servicio y auditoría; cada módulo tiene esquema propio, sin acceso cruzado a tablas; eventos generan proyecciones de reportes; sincronización usa transactional outbox y verifica cupos/recetas de modo fuerte en servidor. Residencia de datos sujeta a verificación de región AWS nacional.",
+    "notas": "Vista C4 lógica de componentes, no BPMN. RF-01 Acceso; RF-02 Agenda; RF-03/04 Episodio; RF-05 Receta; RF-06 ACL; RF-07 Interconsulta; RF-08 Auditoría; RF-09 Sincronización; RF-10 Reportes/observabilidad. No se dibujan todas las flechas transversales para evitar saturación: toda lectura clínica pasa por autorización en servicio y auditoría; cada módulo tiene esquema propio, sin acceso cruzado a tablas; eventos generan proyecciones de reportes; sincronización usa transactional outbox y verifica cupos/recetas de modo fuerte en servidor. Residencia de datos sujeta a verificación de región AWS nacional.\n\nFronteras\nEl centro rural solo habla con la API. La API no guarda datos: valida el token con Acceso y entrega la petición al módulo dueño. Dentro del monolito, los módulos se avisan con eventos y no abren las tablas de los otros. Cognito, la farmacia, el legado y el video quedan fuera, cada uno con un solo módulo que los llama. Los almacenes también quedan fuera del proceso.",
     "transcript": ""
   },
   "vistas": {
     "customViews": [
       {
         "id": "c4d5e6f7-2222-4aaa-8aaa-000000000022",
-        "name": "Arquitectura C4 · Vista única",
+        "name": "Arquitectura C4 · Fronteras",
         "kind": "graph",
         "notation": "c4",
         "graph": {
           "nombre_proyecto": "RedSalud Andina · Arquitectura C4 modular completa",
-          "version": "2.0.0",
+          "version": "1.3.0",
           "notation": "c4",
           "fecha_analisis": "2026-11-14",
           "big_picture": {
-            "descripcion": "Vista única C4 nivel 3 lógico: monolito modular Spring Boot, módulos de negocio, cliente offline-first y sistemas externos. Sin procesos BPMN.",
+            "descripcion": "Cinco fronteras: el centro rural, la API como única entrada, el monolito, los sistemas de afuera y los almacenes. Cada módulo escribe solo su dato.",
             "hotspots": [
-              "Cada módulo posee sus datos y solo expone contratos/eventos; sin JOIN o JPA entre módulos.",
-              "RF-09: cola local y recepción idempotente con UUID/ULID; cupos/recetas se validan en servidor.",
-              "RF-06: historial del legado de solo lectura, caché con frescura visible y ACL SOAP.",
-              "RF-08: autorización por rol y atributo más auditoría inmutable de cada lectura y denegación."
+              "El centro no llama a un módulo directo. Toda petición entra por la API.",
+              "La API no tiene tablas. Entrega la petición al módulo dueño.",
+              "Los almacenes quedan fuera del proceso: cada módulo escribe solo el suyo."
             ],
-            "nodos": [
-              {
-                "id": "ext-cliente",
-                "nombre": "Centro rural · PWA",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "Offline-first, UUID/ULID y cola local con reintentos (RF-09)",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "PWA",
-                  "IndexedDB"
-                ],
-                "x": 30,
-                "y": 45,
-                "width": 285,
-                "height": 112
-              },
-              {
-                "id": "ext-cognito",
-                "nombre": "Amazon Cognito",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "Identidad OIDC; verificación de roles y atributos (RF-01)",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "Cognito"
-                ],
-                "x": 380,
-                "y": 45,
-                "width": 240,
-                "height": 112
-              },
-              {
-                "id": "ext-farmacia",
-                "nombre": "Farmacia del centro",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "Recibe recetas firmadas por entrega eventual (RF-05)",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "SQS"
-                ],
-                "x": 1080,
-                "y": 45,
-                "width": 265,
-                "height": 112
-              },
-              {
-                "id": "ext-legacy",
-                "nombre": "Legado clínico",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "SOAP nocturno y BD de solo lectura; no se modifica (RF-06)",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "SOAP"
-                ],
-                "x": 50,
-                "y": 770,
-                "width": 275,
-                "height": 112
-              },
-              {
-                "id": "ext-aws",
-                "nombre": "Servicios de datos AWS",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "Aurora por esquema; S3/KMS; SQS; S3 Object Lock; caché",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "Aurora PostgreSQL",
-                  "S3",
-                  "SQS"
-                ],
-                "x": 425,
-                "y": 770,
-                "width": 420,
-                "height": 112
-              },
-              {
-                "id": "ext-video",
-                "nombre": "Pasarela video WebRTC",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "Servicio de videollamada gestionado (RF-03)",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "WebRTC"
-                ],
-                "x": 905,
-                "y": 770,
-                "width": 240,
-                "height": 112
-              },
-              {
-                "id": "ext-indicadores",
-                "nombre": "Indicadores",
-                "tipo_elemento": "Sistema Externo",
-                "descripcion": "Proyecciones para reportes: espera, atención, cierre (RF-10)",
-                "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                "metadata": [],
-                "estado_comparativo": "nuevo",
-                "tags_tecnologia": [
-                  "Athena",
-                  "S3"
-                ],
-                "x": 1195,
-                "y": 770,
-                "width": 260,
-                "height": 112
-              }
-            ],
+            "nodos": [],
             "aristas": [
               {
                 "fuente": "ext-cliente",
+                "destino": "mod-api",
+                "descripcion": "única entrada [HTTPS]",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
+                "destino": "mod-identidad",
+                "descripcion": "valida el token",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
+                "destino": "mod-agenda",
+                "descripcion": "reserva el cupo",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
+                "destino": "mod-interconsulta",
+                "descripcion": "abre la solicitud",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
+                "destino": "mod-episodio",
+                "descripcion": "registra la visita",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
+                "destino": "mod-receta",
+                "descripcion": "pide la firma",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
+                "destino": "mod-acl",
+                "descripcion": "consulta el historial",
+                "routing": "orthogonal"
+              },
+              {
+                "fuente": "mod-api",
                 "destino": "mod-sync",
-                "descripcion": "HTTPS + Idempotency-Key",
+                "descripcion": "entrega la cola del centro",
                 "routing": "orthogonal"
               },
               {
@@ -687,9 +744,89 @@
           },
           "agregados": [
             {
-              "nombre_agregado": "Monolito modular · Spring Boot",
-              "entidad_raiz": "Monolito modular · Spring Boot",
-              "descripcion": "Una aplicación desplegable; módulos por contexto y datos propios, contratos públicos y eventos. RF-01 a RF-10. Las cajas externas no son paquetes Java.",
+              "nombre_agregado": "Centro rural",
+              "entidad_raiz": "Centro rural",
+              "descripcion": "El puesto de salud. Si no hay señal, la visita se guarda aquí y sale después hacia la API.",
+              "nodos": [
+                {
+                  "id": "ext-cliente",
+                  "nombre": "Centro rural · PWA",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "Habla solo con la API. Si se cae el enlace, guarda la visita y la reenvía.",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "PWA",
+                    "IndexedDB"
+                  ],
+                  "x": 70,
+                  "y": 58,
+                  "width": 240,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 36,
+              "y": 20,
+              "width": 320,
+              "height": 168,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+            },
+            {
+              "nombre_agregado": "Punto de entrada",
+              "entidad_raiz": "Punto de entrada",
+              "descripcion": "La única puerta del sistema. Nada de afuera cruza esta frontera sin pasar por la API.",
+              "nodos": [
+                {
+                  "id": "mod-api",
+                  "nombre": "API",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Única puerta de entrada. Valida el token y entrega la petición al módulo dueño del dato.",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.api",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "ninguno. No tiene esquema propio.",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "entrada",
+                      "valor": "HTTPS. Todo el centro pasa por aquí.",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Spring Web",
+                    "HTTPS"
+                  ],
+                  "x": 620,
+                  "y": 58,
+                  "width": 240,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 540,
+              "y": 20,
+              "width": 400,
+              "height": 168,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+            },
+            {
+              "nombre_agregado": "Monolito modular Spring Boot",
+              "entidad_raiz": "Monolito modular Spring Boot",
+              "descripcion": "Un solo proceso. Cada caja escribe su propio dato y las demás se enteran por eventos.",
               "nodos": [
                 {
                   "id": "mod-identidad",
@@ -711,10 +848,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 80,
-                  "y": 230,
-                  "width": 255,
-                  "height": 100
+                  "x": 70,
+                  "y": 268,
+                  "width": 240,
+                  "height": 104
                 },
                 {
                   "id": "mod-agenda",
@@ -736,10 +873,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 395,
-                  "y": 230,
-                  "width": 255,
-                  "height": 100
+                  "x": 350,
+                  "y": 268,
+                  "width": 240,
+                  "height": 104
                 },
                 {
                   "id": "mod-interconsulta",
@@ -761,10 +898,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 710,
-                  "y": 230,
-                  "width": 255,
-                  "height": 100
+                  "x": 630,
+                  "y": 268,
+                  "width": 240,
+                  "height": 104
                 },
                 {
                   "id": "mod-episodio",
@@ -786,60 +923,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 1025,
-                  "y": 230,
-                  "width": 260,
-                  "height": 100
-                },
-                {
-                  "id": "mod-sync",
-                  "nombre": "Sincronización",
-                  "tipo_elemento": "Componente",
-                  "descripcion": "RF-09 · idempotencia, conflictos y reintentos",
-                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                  "metadata": [
-                    {
-                      "clave": "paquete",
-                      "valor": "com.redsalud.andina.sincronizacion",
-                      "tipo": "texto"
-                    },
-                    {
-                      "clave": "dato",
-                      "valor": "claves idempotentes y outbox",
-                      "tipo": "texto"
-                    }
-                  ],
-                  "estado_comparativo": "nuevo",
-                  "tags_tecnologia": [],
-                  "x": 80,
-                  "y": 465,
-                  "width": 255,
-                  "height": 100
-                },
-                {
-                  "id": "mod-acl",
-                  "nombre": "Historial",
-                  "tipo_elemento": "Componente",
-                  "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
-                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
-                  "metadata": [
-                    {
-                      "clave": "paquete",
-                      "valor": "com.redsalud.andina.historial",
-                      "tipo": "texto"
-                    },
-                    {
-                      "clave": "dato",
-                      "valor": "proyección historial solo lectura",
-                      "tipo": "texto"
-                    }
-                  ],
-                  "estado_comparativo": "nuevo",
-                  "tags_tecnologia": [],
-                  "x": 395,
-                  "y": 465,
-                  "width": 255,
-                  "height": 100
+                  "x": 910,
+                  "y": 268,
+                  "width": 240,
+                  "height": 104
                 },
                 {
                   "id": "mod-receta",
@@ -861,35 +948,35 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 710,
-                  "y": 465,
-                  "width": 255,
-                  "height": 100
+                  "x": 1190,
+                  "y": 268,
+                  "width": 240,
+                  "height": 104
                 },
                 {
-                  "id": "mod-auditoria",
-                  "nombre": "Auditoría",
+                  "id": "mod-sync",
+                  "nombre": "Sincronización",
                   "tipo_elemento": "Componente",
-                  "descripcion": "RF-08 · accesos y denegaciones; append-only",
+                  "descripcion": "RF-09 · idempotencia, conflictos y reintentos",
                   "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
                   "metadata": [
                     {
                       "clave": "paquete",
-                      "valor": "com.redsalud.andina.auditoria",
+                      "valor": "com.redsalud.andina.sincronizacion",
                       "tipo": "texto"
                     },
                     {
                       "clave": "dato",
-                      "valor": "evento acceso clínico",
+                      "valor": "claves idempotentes y outbox",
                       "tipo": "texto"
                     }
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 1025,
-                  "y": 465,
-                  "width": 260,
-                  "height": 100
+                  "x": 350,
+                  "y": 450,
+                  "width": 240,
+                  "height": 104
                 },
                 {
                   "id": "mod-reportes",
@@ -911,10 +998,60 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 710,
-                  "y": 620,
-                  "width": 270,
-                  "height": 90
+                  "x": 630,
+                  "y": 450,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-acl",
+                  "nombre": "Historial",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "proyección historial solo lectura",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [],
+                  "x": 910,
+                  "y": 450,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "mod-auditoria",
+                  "nombre": "Auditoría",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "RF-08 · accesos y denegaciones; append-only",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.auditoria",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "evento acceso clínico",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [],
+                  "x": 1190,
+                  "y": 450,
+                  "width": 240,
+                  "height": 104
                 }
               ],
               "aristas": [
@@ -968,19 +1105,148 @@
                   "dashed": true
                 }
               ],
-              "x": 45,
-              "y": 185,
-              "width": 1370,
-              "height": 550,
+              "x": 36,
+              "y": 214,
+              "width": 1420,
+              "height": 390,
               "tipo_contenedor": "Límite de Sistema",
               "estado_comparativo": "nuevo",
-              "fuente": "Caso RedSalud Andina y taller Spring Boot"
+              "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+            },
+            {
+              "nombre_agregado": "Sistemas externos",
+              "entidad_raiz": "Sistemas externos",
+              "descripcion": "Sistemas que no son nuestros. Se hablan desde un solo módulo y no entran a las tablas.",
+              "nodos": [
+                {
+                  "id": "ext-cognito",
+                  "nombre": "Amazon Cognito",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "Identidad OIDC; verificación de roles y atributos (RF-01)",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Cognito"
+                  ],
+                  "x": 64,
+                  "y": 700,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "ext-farmacia",
+                  "nombre": "Farmacia del centro",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "Recibe recetas firmadas por entrega eventual (RF-05)",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "SQS"
+                  ],
+                  "x": 300,
+                  "y": 700,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "ext-legacy",
+                  "nombre": "Legado clínico",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "SOAP nocturno y BD de solo lectura; no se modifica (RF-06)",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "SOAP"
+                  ],
+                  "x": 536,
+                  "y": 700,
+                  "width": 240,
+                  "height": 104
+                },
+                {
+                  "id": "ext-video",
+                  "nombre": "Pasarela video WebRTC",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "Servicio de videollamada gestionado (RF-03)",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "WebRTC"
+                  ],
+                  "x": 772,
+                  "y": 700,
+                  "width": 240,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 36,
+              "y": 640,
+              "width": 1000,
+              "height": 190,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
+            },
+            {
+              "nombre_agregado": "Almacenes",
+              "entidad_raiz": "Almacenes",
+              "descripcion": "Los datos viven aquí, en una sola región. Cada módulo escribe solo su esquema o su archivo.",
+              "nodos": [
+                {
+                  "id": "ext-aws",
+                  "nombre": "Servicios de datos AWS",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "Aurora por esquema; S3/KMS; SQS; S3 Object Lock; caché",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Aurora PostgreSQL",
+                    "S3",
+                    "SQS"
+                  ],
+                  "x": 1096,
+                  "y": 700,
+                  "width": 170,
+                  "height": 104
+                },
+                {
+                  "id": "ext-indicadores",
+                  "nombre": "Indicadores",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "Proyecciones para reportes: espera, atención, cierre (RF-10)",
+                  "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
+                  "metadata": [],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Athena",
+                    "S3"
+                  ],
+                  "x": 1280,
+                  "y": 700,
+                  "width": 156,
+                  "height": 104
+                }
+              ],
+              "aristas": [],
+              "x": 1060,
+              "y": 640,
+              "width": 396,
+              "height": 190,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
             }
           ],
           "read_models": [],
           "politicas_inter_agregados": [],
           "responsables": [],
-          "notas": "Vista C4 lógica de componentes, no BPMN. RF-01 Acceso; RF-02 Agenda; RF-03/04 Episodio; RF-05 Receta; RF-06 ACL; RF-07 Interconsulta; RF-08 Auditoría; RF-09 Sincronización; RF-10 Reportes/observabilidad. No se dibujan todas las flechas transversales para evitar saturación: toda lectura clínica pasa por autorización en servicio y auditoría; cada módulo tiene esquema propio, sin acceso cruzado a tablas; eventos generan proyecciones de reportes; sincronización usa transactional outbox y verifica cupos/recetas de modo fuerte en servidor. Residencia de datos sujeta a verificación de región AWS nacional.",
+          "notas": "Vista C4 lógica de componentes, no BPMN. RF-01 Acceso; RF-02 Agenda; RF-03/04 Episodio; RF-05 Receta; RF-06 ACL; RF-07 Interconsulta; RF-08 Auditoría; RF-09 Sincronización; RF-10 Reportes/observabilidad. No se dibujan todas las flechas transversales para evitar saturación: toda lectura clínica pasa por autorización en servicio y auditoría; cada módulo tiene esquema propio, sin acceso cruzado a tablas; eventos generan proyecciones de reportes; sincronización usa transactional outbox y verifica cupos/recetas de modo fuerte en servidor. Residencia de datos sujeta a verificación de región AWS nacional.\n\nFronteras\nEl centro rural solo habla con la API. La API no guarda datos: valida el token con Acceso y entrega la petición al módulo dueño. Dentro del monolito, los módulos se avisan con eventos y no abren las tablas de los otros. Cognito, la farmacia, el legado y el video quedan fuera, cada uno con un solo módulo que los llama. Los almacenes también quedan fuera del proceso.",
           "transcript": ""
         },
         "createdAt": "2026-11-14T15:45:00.000Z"
