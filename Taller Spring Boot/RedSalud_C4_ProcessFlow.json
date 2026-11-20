@@ -18,99 +18,417 @@
           "fuente": "ext-cliente",
           "destino": "mod-api",
           "descripcion": "única entrada [HTTPS]",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 1,
+            "y": 0.5
+          },
+          "targetAnchor": {
+            "x": 0,
+            "y": 0.5
+          }
         },
         {
           "fuente": "mod-api",
           "destino": "mod-identidad",
           "descripcion": "valida el token",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 240.0,
+              "y": 350
+            }
+          ]
         },
         {
           "fuente": "mod-api",
           "destino": "mod-agenda",
           "descripcion": "reserva el cupo",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 640.0,
+              "y": 350
+            }
+          ]
         },
         {
           "fuente": "mod-api",
           "destino": "mod-interconsulta",
           "descripcion": "abre la solicitud",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 1040.0,
+              "y": 350
+            }
+          ]
         },
         {
           "fuente": "mod-api",
           "destino": "mod-episodio",
           "descripcion": "registra la visita",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 1440.0,
+              "y": 350
+            }
+          ]
         },
         {
           "fuente": "mod-api",
           "destino": "mod-receta",
           "descripcion": "pide la firma",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 1840.0,
+              "y": 350
+            }
+          ]
         },
         {
           "fuente": "mod-api",
           "destino": "mod-acl",
           "descripcion": "consulta el historial",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 1240,
+              "y": 350
+            },
+            {
+              "x": 1240,
+              "y": 717
+            },
+            {
+              "x": 1440.0,
+              "y": 717
+            }
+          ]
         },
         {
           "fuente": "mod-api",
           "destino": "mod-sync",
           "descripcion": "entrega la cola del centro",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1060.0,
+              "y": 212
+            },
+            {
+              "x": 1060.0,
+              "y": 350
+            },
+            {
+              "x": 440,
+              "y": 350
+            },
+            {
+              "x": 440,
+              "y": 717
+            },
+            {
+              "x": 640.0,
+              "y": 717
+            }
+          ]
         },
         {
           "fuente": "mod-identidad",
           "destino": "ext-cognito",
           "descripcion": "OIDC / atributos",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          }
         },
         {
           "fuente": "mod-acl",
           "destino": "ext-legacy",
           "descripcion": "SOAP solo lectura / nocturno",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1440.0,
+              "y": 1044
+            },
+            {
+              "x": 1240,
+              "y": 1044
+            }
+          ]
         },
         {
           "fuente": "mod-episodio",
           "destino": "ext-video",
           "descripcion": "videoconsulta",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1440.0,
+              "y": 717
+            },
+            {
+              "x": 1640,
+              "y": 717
+            }
+          ]
         },
         {
           "fuente": "mod-receta",
           "destino": "ext-farmacia",
           "descripcion": "RecetaFirmada por SQS",
           "routing": "orthogonal",
-          "dashed": true
+          "dashed": true,
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1840.0,
+              "y": 717
+            },
+            {
+              "x": 2040,
+              "y": 717
+            },
+            {
+              "x": 2040,
+              "y": 1044
+            },
+            {
+              "x": 640.0,
+              "y": 1044
+            }
+          ]
         },
         {
           "fuente": "mod-reportes",
           "destino": "ext-indicadores",
           "descripcion": "proyección de métricas",
           "routing": "orthogonal",
-          "dashed": true
+          "dashed": true,
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          }
         },
         {
           "fuente": "mod-auditoria",
           "destino": "ext-aws",
           "descripcion": "S3 Object Lock",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 1,
+            "y": 0.5
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 2040,
+              "y": 858.0
+            },
+            {
+              "x": 2040,
+              "y": 1044
+            }
+          ]
         },
         {
           "fuente": "mod-agenda",
           "destino": "ext-aws",
           "descripcion": "Aurora · esquema agenda",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.5,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 640.0,
+              "y": 717
+            },
+            {
+              "x": 440,
+              "y": 717
+            },
+            {
+              "x": 440,
+              "y": 1044
+            },
+            {
+              "x": 2040,
+              "y": 1044
+            }
+          ]
         },
         {
           "fuente": "mod-acl",
           "destino": "ext-aws",
           "descripcion": "read model con frescura",
-          "routing": "orthogonal"
+          "routing": "orthogonal",
+          "sourceAnchor": {
+            "x": 0.5,
+            "y": 1
+          },
+          "targetAnchor": {
+            "x": 0.2,
+            "y": 0
+          },
+          "midpoints": [
+            {
+              "x": 1440.0,
+              "y": 1044
+            },
+            {
+              "x": 2040,
+              "y": 1044
+            }
+          ]
         }
       ]
     },
@@ -132,17 +450,17 @@
               "PWA",
               "IndexedDB"
             ],
-            "x": 70,
-            "y": 58,
+            "x": 120,
+            "y": 100,
             "width": 240,
-            "height": 104
+            "height": 112
           }
         ],
         "aristas": [],
-        "x": 36,
-        "y": 20,
-        "width": 320,
-        "height": 168,
+        "x": 48,
+        "y": 40,
+        "width": 420,
+        "height": 230,
         "tipo_contenedor": "Límite de Sistema",
         "estado_comparativo": "nuevo",
         "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -180,17 +498,17 @@
               "Spring Web",
               "HTTPS"
             ],
-            "x": 620,
-            "y": 58,
+            "x": 940,
+            "y": 100,
             "width": 240,
-            "height": 104
+            "height": 112
           }
         ],
         "aristas": [],
-        "x": 540,
-        "y": 20,
-        "width": 400,
-        "height": 168,
+        "x": 860,
+        "y": 40,
+        "width": 420,
+        "height": 230,
         "tipo_contenedor": "Límite de Sistema",
         "estado_comparativo": "nuevo",
         "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -220,10 +538,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 70,
-            "y": 268,
+            "x": 120,
+            "y": 520,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-agenda",
@@ -245,10 +563,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 350,
-            "y": 268,
+            "x": 520,
+            "y": 520,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-interconsulta",
@@ -270,10 +588,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 630,
-            "y": 268,
+            "x": 920,
+            "y": 520,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-episodio",
@@ -295,10 +613,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 910,
-            "y": 268,
+            "x": 1320,
+            "y": 520,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-receta",
@@ -320,10 +638,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 1190,
-            "y": 268,
+            "x": 1720,
+            "y": 520,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-sync",
@@ -345,10 +663,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 350,
-            "y": 450,
+            "x": 520,
+            "y": 802,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-reportes",
@@ -370,10 +688,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 630,
-            "y": 450,
+            "x": 920,
+            "y": 802,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-acl",
@@ -395,10 +713,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 910,
-            "y": 450,
+            "x": 1320,
+            "y": 802,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "mod-auditoria",
@@ -420,10 +738,10 @@
             ],
             "estado_comparativo": "nuevo",
             "tags_tecnologia": [],
-            "x": 1190,
-            "y": 450,
+            "x": 1720,
+            "y": 802,
             "width": 240,
-            "height": 104
+            "height": 112
           }
         ],
         "aristas": [
@@ -432,55 +750,135 @@
             "destino": "mod-interconsulta",
             "descripcion": "CupoReservado (evento)",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 1,
+              "y": 0.5
+            },
+            "targetAnchor": {
+              "x": 0,
+              "y": 0.5
+            }
           },
           {
             "fuente": "mod-interconsulta",
             "destino": "mod-episodio",
             "descripcion": "InterconsultaAgendada (evento)",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 1,
+              "y": 0.5
+            },
+            "targetAnchor": {
+              "x": 0,
+              "y": 0.5
+            }
           },
           {
             "fuente": "mod-episodio",
             "destino": "mod-receta",
             "descripcion": "prescripción por contrato",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 1,
+              "y": 0.5
+            },
+            "targetAnchor": {
+              "x": 0,
+              "y": 0.5
+            }
           },
           {
             "fuente": "mod-sync",
             "destino": "mod-interconsulta",
             "descripcion": "solicitudes idempotentes",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 0.5,
+              "y": 0
+            },
+            "targetAnchor": {
+              "x": 0.5,
+              "y": 1
+            },
+            "midpoints": [
+              {
+                "x": 640.0,
+                "y": 717
+              },
+              {
+                "x": 850,
+                "y": 717
+              },
+              {
+                "x": 850,
+                "y": 632
+              }
+            ]
           },
           {
             "fuente": "mod-episodio",
             "destino": "mod-acl",
             "descripcion": "historial por puerto",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 0.5,
+              "y": 1
+            },
+            "targetAnchor": {
+              "x": 0.5,
+              "y": 0
+            }
           },
           {
             "fuente": "mod-episodio",
             "destino": "mod-auditoria",
             "descripcion": "acceso clínico auditado",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 0.5,
+              "y": 1
+            },
+            "targetAnchor": {
+              "x": 0.5,
+              "y": 0
+            },
+            "midpoints": [
+              {
+                "x": 1440.0,
+                "y": 717
+              },
+              {
+                "x": 1840.0,
+                "y": 717
+              }
+            ]
           },
           {
             "fuente": "mod-interconsulta",
             "destino": "mod-reportes",
             "descripcion": "estado actualizado (evento)",
             "routing": "orthogonal",
-            "dashed": true
+            "dashed": true,
+            "sourceAnchor": {
+              "x": 0.5,
+              "y": 1
+            },
+            "targetAnchor": {
+              "x": 0.5,
+              "y": 0
+            }
           }
         ],
-        "x": 36,
-        "y": 214,
-        "width": 1420,
-        "height": 390,
+        "x": 48,
+        "y": 430,
+        "width": 2052,
+        "height": 534,
         "tipo_contenedor": "Límite de Sistema",
         "estado_comparativo": "nuevo",
         "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -501,10 +899,10 @@
             "tags_tecnologia": [
               "Cognito"
             ],
-            "x": 64,
-            "y": 700,
+            "x": 120,
+            "y": 1194,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "ext-farmacia",
@@ -517,10 +915,10 @@
             "tags_tecnologia": [
               "SQS"
             ],
-            "x": 300,
-            "y": 700,
+            "x": 520,
+            "y": 1194,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "ext-legacy",
@@ -533,10 +931,10 @@
             "tags_tecnologia": [
               "SOAP"
             ],
-            "x": 536,
-            "y": 700,
+            "x": 1120,
+            "y": 1194,
             "width": 240,
-            "height": 104
+            "height": 112
           },
           {
             "id": "ext-video",
@@ -549,17 +947,17 @@
             "tags_tecnologia": [
               "WebRTC"
             ],
-            "x": 772,
-            "y": 700,
+            "x": 1520,
+            "y": 1194,
             "width": 240,
-            "height": 104
+            "height": 112
           }
         ],
         "aristas": [],
-        "x": 36,
-        "y": 640,
-        "width": 1000,
-        "height": 190,
+        "x": 48,
+        "y": 1124,
+        "width": 2152,
+        "height": 252,
         "tipo_contenedor": "Límite de Sistema",
         "estado_comparativo": "nuevo",
         "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -582,10 +980,10 @@
               "S3",
               "SQS"
             ],
-            "x": 1096,
-            "y": 700,
-            "width": 170,
-            "height": 104
+            "x": 1920,
+            "y": 1596,
+            "width": 240,
+            "height": 112
           },
           {
             "id": "ext-indicadores",
@@ -599,17 +997,17 @@
               "Athena",
               "S3"
             ],
-            "x": 1280,
-            "y": 700,
-            "width": 156,
-            "height": 104
+            "x": 920,
+            "y": 1596,
+            "width": 240,
+            "height": 112
           }
         ],
         "aristas": [],
-        "x": 1060,
-        "y": 640,
-        "width": 396,
-        "height": 190,
+        "x": 48,
+        "y": 1526,
+        "width": 2152,
+        "height": 252,
         "tipo_contenedor": "Límite de Sistema",
         "estado_comparativo": "nuevo",
         "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -646,99 +1044,417 @@
                 "fuente": "ext-cliente",
                 "destino": "mod-api",
                 "descripcion": "única entrada [HTTPS]",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 1,
+                  "y": 0.5
+                },
+                "targetAnchor": {
+                  "x": 0,
+                  "y": 0.5
+                }
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-identidad",
                 "descripcion": "valida el token",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 240.0,
+                    "y": 350
+                  }
+                ]
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-agenda",
                 "descripcion": "reserva el cupo",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 640.0,
+                    "y": 350
+                  }
+                ]
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-interconsulta",
                 "descripcion": "abre la solicitud",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 1040.0,
+                    "y": 350
+                  }
+                ]
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-episodio",
                 "descripcion": "registra la visita",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 1440.0,
+                    "y": 350
+                  }
+                ]
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-receta",
                 "descripcion": "pide la firma",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 1840.0,
+                    "y": 350
+                  }
+                ]
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-acl",
                 "descripcion": "consulta el historial",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 1240,
+                    "y": 350
+                  },
+                  {
+                    "x": 1240,
+                    "y": 717
+                  },
+                  {
+                    "x": 1440.0,
+                    "y": 717
+                  }
+                ]
               },
               {
                 "fuente": "mod-api",
                 "destino": "mod-sync",
                 "descripcion": "entrega la cola del centro",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1060.0,
+                    "y": 212
+                  },
+                  {
+                    "x": 1060.0,
+                    "y": 350
+                  },
+                  {
+                    "x": 440,
+                    "y": 350
+                  },
+                  {
+                    "x": 440,
+                    "y": 717
+                  },
+                  {
+                    "x": 640.0,
+                    "y": 717
+                  }
+                ]
               },
               {
                 "fuente": "mod-identidad",
                 "destino": "ext-cognito",
                 "descripcion": "OIDC / atributos",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                }
               },
               {
                 "fuente": "mod-acl",
                 "destino": "ext-legacy",
                 "descripcion": "SOAP solo lectura / nocturno",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1440.0,
+                    "y": 1044
+                  },
+                  {
+                    "x": 1240,
+                    "y": 1044
+                  }
+                ]
               },
               {
                 "fuente": "mod-episodio",
                 "destino": "ext-video",
                 "descripcion": "videoconsulta",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1440.0,
+                    "y": 717
+                  },
+                  {
+                    "x": 1640,
+                    "y": 717
+                  }
+                ]
               },
               {
                 "fuente": "mod-receta",
                 "destino": "ext-farmacia",
                 "descripcion": "RecetaFirmada por SQS",
                 "routing": "orthogonal",
-                "dashed": true
+                "dashed": true,
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1840.0,
+                    "y": 717
+                  },
+                  {
+                    "x": 2040,
+                    "y": 717
+                  },
+                  {
+                    "x": 2040,
+                    "y": 1044
+                  },
+                  {
+                    "x": 640.0,
+                    "y": 1044
+                  }
+                ]
               },
               {
                 "fuente": "mod-reportes",
                 "destino": "ext-indicadores",
                 "descripcion": "proyección de métricas",
                 "routing": "orthogonal",
-                "dashed": true
+                "dashed": true,
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                }
               },
               {
                 "fuente": "mod-auditoria",
                 "destino": "ext-aws",
                 "descripcion": "S3 Object Lock",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 1,
+                  "y": 0.5
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 2040,
+                    "y": 858.0
+                  },
+                  {
+                    "x": 2040,
+                    "y": 1044
+                  }
+                ]
               },
               {
                 "fuente": "mod-agenda",
                 "destino": "ext-aws",
                 "descripcion": "Aurora · esquema agenda",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 640.0,
+                    "y": 717
+                  },
+                  {
+                    "x": 440,
+                    "y": 717
+                  },
+                  {
+                    "x": 440,
+                    "y": 1044
+                  },
+                  {
+                    "x": 2040,
+                    "y": 1044
+                  }
+                ]
               },
               {
                 "fuente": "mod-acl",
                 "destino": "ext-aws",
                 "descripcion": "read model con frescura",
-                "routing": "orthogonal"
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 0.5,
+                  "y": 1
+                },
+                "targetAnchor": {
+                  "x": 0.2,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 1440.0,
+                    "y": 1044
+                  },
+                  {
+                    "x": 2040,
+                    "y": 1044
+                  }
+                ]
               }
             ]
           },
@@ -760,17 +1476,17 @@
                     "PWA",
                     "IndexedDB"
                   ],
-                  "x": 70,
-                  "y": 58,
+                  "x": 120,
+                  "y": 100,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 }
               ],
               "aristas": [],
-              "x": 36,
-              "y": 20,
-              "width": 320,
-              "height": 168,
+              "x": 48,
+              "y": 40,
+              "width": 420,
+              "height": 230,
               "tipo_contenedor": "Límite de Sistema",
               "estado_comparativo": "nuevo",
               "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -808,17 +1524,17 @@
                     "Spring Web",
                     "HTTPS"
                   ],
-                  "x": 620,
-                  "y": 58,
+                  "x": 940,
+                  "y": 100,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 }
               ],
               "aristas": [],
-              "x": 540,
-              "y": 20,
-              "width": 400,
-              "height": 168,
+              "x": 860,
+              "y": 40,
+              "width": 420,
+              "height": 230,
               "tipo_contenedor": "Límite de Sistema",
               "estado_comparativo": "nuevo",
               "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -848,10 +1564,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 70,
-                  "y": 268,
+                  "x": 120,
+                  "y": 520,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-agenda",
@@ -873,10 +1589,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 350,
-                  "y": 268,
+                  "x": 520,
+                  "y": 520,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-interconsulta",
@@ -898,10 +1614,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 630,
-                  "y": 268,
+                  "x": 920,
+                  "y": 520,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-episodio",
@@ -923,10 +1639,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 910,
-                  "y": 268,
+                  "x": 1320,
+                  "y": 520,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-receta",
@@ -948,10 +1664,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 1190,
-                  "y": 268,
+                  "x": 1720,
+                  "y": 520,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-sync",
@@ -973,10 +1689,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 350,
-                  "y": 450,
+                  "x": 520,
+                  "y": 802,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-reportes",
@@ -998,10 +1714,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 630,
-                  "y": 450,
+                  "x": 920,
+                  "y": 802,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-acl",
@@ -1023,10 +1739,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 910,
-                  "y": 450,
+                  "x": 1320,
+                  "y": 802,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "mod-auditoria",
@@ -1048,10 +1764,10 @@
                   ],
                   "estado_comparativo": "nuevo",
                   "tags_tecnologia": [],
-                  "x": 1190,
-                  "y": 450,
+                  "x": 1720,
+                  "y": 802,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 }
               ],
               "aristas": [
@@ -1060,55 +1776,135 @@
                   "destino": "mod-interconsulta",
                   "descripcion": "CupoReservado (evento)",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "targetAnchor": {
+                    "x": 0,
+                    "y": 0.5
+                  }
                 },
                 {
                   "fuente": "mod-interconsulta",
                   "destino": "mod-episodio",
                   "descripcion": "InterconsultaAgendada (evento)",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "targetAnchor": {
+                    "x": 0,
+                    "y": 0.5
+                  }
                 },
                 {
                   "fuente": "mod-episodio",
                   "destino": "mod-receta",
                   "descripcion": "prescripción por contrato",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "targetAnchor": {
+                    "x": 0,
+                    "y": 0.5
+                  }
                 },
                 {
                   "fuente": "mod-sync",
                   "destino": "mod-interconsulta",
                   "descripcion": "solicitudes idempotentes",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 0.5,
+                    "y": 0
+                  },
+                  "targetAnchor": {
+                    "x": 0.5,
+                    "y": 1
+                  },
+                  "midpoints": [
+                    {
+                      "x": 640.0,
+                      "y": 717
+                    },
+                    {
+                      "x": 850,
+                      "y": 717
+                    },
+                    {
+                      "x": 850,
+                      "y": 632
+                    }
+                  ]
                 },
                 {
                   "fuente": "mod-episodio",
                   "destino": "mod-acl",
                   "descripcion": "historial por puerto",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 0.5,
+                    "y": 1
+                  },
+                  "targetAnchor": {
+                    "x": 0.5,
+                    "y": 0
+                  }
                 },
                 {
                   "fuente": "mod-episodio",
                   "destino": "mod-auditoria",
                   "descripcion": "acceso clínico auditado",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 0.5,
+                    "y": 1
+                  },
+                  "targetAnchor": {
+                    "x": 0.5,
+                    "y": 0
+                  },
+                  "midpoints": [
+                    {
+                      "x": 1440.0,
+                      "y": 717
+                    },
+                    {
+                      "x": 1840.0,
+                      "y": 717
+                    }
+                  ]
                 },
                 {
                   "fuente": "mod-interconsulta",
                   "destino": "mod-reportes",
                   "descripcion": "estado actualizado (evento)",
                   "routing": "orthogonal",
-                  "dashed": true
+                  "dashed": true,
+                  "sourceAnchor": {
+                    "x": 0.5,
+                    "y": 1
+                  },
+                  "targetAnchor": {
+                    "x": 0.5,
+                    "y": 0
+                  }
                 }
               ],
-              "x": 36,
-              "y": 214,
-              "width": 1420,
-              "height": 390,
+              "x": 48,
+              "y": 430,
+              "width": 2052,
+              "height": 534,
               "tipo_contenedor": "Límite de Sistema",
               "estado_comparativo": "nuevo",
               "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -1129,10 +1925,10 @@
                   "tags_tecnologia": [
                     "Cognito"
                   ],
-                  "x": 64,
-                  "y": 700,
+                  "x": 120,
+                  "y": 1194,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "ext-farmacia",
@@ -1145,10 +1941,10 @@
                   "tags_tecnologia": [
                     "SQS"
                   ],
-                  "x": 300,
-                  "y": 700,
+                  "x": 520,
+                  "y": 1194,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "ext-legacy",
@@ -1161,10 +1957,10 @@
                   "tags_tecnologia": [
                     "SOAP"
                   ],
-                  "x": 536,
-                  "y": 700,
+                  "x": 1120,
+                  "y": 1194,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 },
                 {
                   "id": "ext-video",
@@ -1177,17 +1973,17 @@
                   "tags_tecnologia": [
                     "WebRTC"
                   ],
-                  "x": 772,
-                  "y": 700,
+                  "x": 1520,
+                  "y": 1194,
                   "width": 240,
-                  "height": 104
+                  "height": 112
                 }
               ],
               "aristas": [],
-              "x": 36,
-              "y": 640,
-              "width": 1000,
-              "height": 190,
+              "x": 48,
+              "y": 1124,
+              "width": 2152,
+              "height": 252,
               "tipo_contenedor": "Límite de Sistema",
               "estado_comparativo": "nuevo",
               "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
@@ -1210,10 +2006,10 @@
                     "S3",
                     "SQS"
                   ],
-                  "x": 1096,
-                  "y": 700,
-                  "width": 170,
-                  "height": 104
+                  "x": 1920,
+                  "y": 1596,
+                  "width": 240,
+                  "height": 112
                 },
                 {
                   "id": "ext-indicadores",
@@ -1227,17 +2023,17 @@
                     "Athena",
                     "S3"
                   ],
-                  "x": 1280,
-                  "y": 700,
-                  "width": 156,
-                  "height": 104
+                  "x": 920,
+                  "y": 1596,
+                  "width": 240,
+                  "height": 112
                 }
               ],
               "aristas": [],
-              "x": 1060,
-              "y": 640,
-              "width": 396,
-              "height": 190,
+              "x": 48,
+              "y": 1526,
+              "width": 2152,
+              "height": 252,
               "tipo_contenedor": "Límite de Sistema",
               "estado_comparativo": "nuevo",
               "fuente": "RedSalud Andina · caso y taller Java/Spring Boot"
