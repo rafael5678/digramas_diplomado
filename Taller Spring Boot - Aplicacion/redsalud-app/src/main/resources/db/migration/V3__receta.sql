@@ -1,0 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS receta;
+CREATE TABLE receta.receta (
+  id VARCHAR(64) PRIMARY KEY,
+  episodio_id VARCHAR(64) NOT NULL,
+  firmada BOOLEAN NOT NULL,
+  version BIGINT NOT NULL
+);
