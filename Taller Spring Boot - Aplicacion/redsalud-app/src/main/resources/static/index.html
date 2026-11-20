@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RedSalud Andina</title>
+  <style>
+    :root {
+      --ink: #1c241c;
+      --muted: #5c675c;
+      --line: #d9dfd4;
+      --paper: #f4f6f1;
+      --card: #ffffff;
+      --green: #1f6b45;
+      --green-dark: #164e32;
+      --bad: #8d2f2f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    header {
+      background: var(--green-dark);
+      color: #f4f7f2;
+      padding: 22px 20px 18px;
+    }
+    header p { margin: 6px 0 0; color: #d5e4d8; max-width: 46rem; }
+    main { max-width: 52rem; margin: 0 auto; padding: 18px 16px 40px; }
+    h1 { margin: 0; font-size: 1.55rem; font-weight: 650; }
+    h2 { margin: 0 0 10px; font-size: 1rem; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+    label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font: inherit;
+      background: #fff;
+    }
+    .acciones { display: flex; flex-direction: column; gap: 8px; }
+    button {
+      text-align: left;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    button strong { display: block; }
+    button span { color: var(--muted); font-size: 0.86rem; }
+    button:hover { border-color: var(--green); }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    #salida {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: Consolas, monospace;
+      font-size: 0.88rem;
+      min-height: 7rem;
+    }
+    .ok { color: var(--green-dark); }
+    .mal { color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>RedSalud Andina</h1>
+    <p>Consola local de la red de centros rurales. Desde aquí se reserva el cupo, se cierra la teleconsulta, se firma la receta, se consulta el historial del legado y se sincroniza la cola del centro.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Quién entra</h2>
+      <div class="grid">
+        <div>
+          <label for="actor">Actor</label>
+          <input id="actor" value="medico-1">
+        </div>
+        <div>
+          <label for="rol">Rol</label>
+          <input id="rol" value="MEDICO_RURAL">
+        </div>
+        <div>
+          <label for="centro">Centro</label>
+          <input id="centro" value="centro-3">
+        </div>
+        <div>
+          <label for="paciente">Paciente</label>
+          <input id="paciente" value="p-1">
+        </div>
+        <div>
+          <label for="cupo">Cupo</label>
+          <input id="cupo" value="cupo-1">
+        </div>
+        <div>
+          <label for="episodio">Episodio</label>
+          <input id="episodio" value="ep-1">
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Operaciones</h2>
+      <div class="acciones">
+        <button id="btn-reserva" type="button"><strong>Reservar cupo</strong><span>El médico rural toma el cupo del especialista.</span></button>
+        <button id="btn-cierre" type="button"><strong>Cerrar teleconsulta</strong><span>El episodio queda cerrado.</span></button>
+        <button id="btn-receta" type="button"><strong>Firmar receta</strong><span>El especialista emite la receta del episodio.</span></button>
+        <button id="btn-historial" type="button"><strong>Consultar historial</strong><span>Lee la historia del legado, o la última copia si el legado no responde.</span></button>
+        <button id="btn-sync" type="button"><strong>Sincronizar cola</strong><span>El mismo envío del centro no se procesa dos veces.</span></button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Respuesta</h2>
+      <pre id="salida">Pulsa una operación para ver la respuesta de la API.</pre>
+    </section>
+  </main>
+  <script>
+    const salida = document.getElementById("salida");
+    const valor = (id) => document.getElementById(id).value.trim();
+
+    function cabeceras() {
+      return {
+        "Content-Type": "application/json",
+        "X-Actor": valor("actor"),
+        "X-Rol": valor("rol"),
+        "X-Centro": valor("centro")
+      };
+    }
+
+    async function llamar(boton, texto, url, opciones) {
+      const botones = document.querySelectorAll("button");
+      botones.forEach((b) => b.disabled = true);
+      salida.className = "";
+      salida.textContent = texto;
+      try {
+        const respuesta = await fetch(url, opciones);
+        const cuerpo = await respuesta.text();
+        const frescura = respuesta.headers.get("X-Data-Freshness");
+        const extra = frescura ? "\nX-Data-Freshness: " + frescura : "";
+        let bonito = cuerpo;
+        try { bonito = JSON.stringify(JSON.parse(cuerpo), null, 2); } catch (e) {}
+        salida.className = respuesta.ok ? "ok" : "mal";
+        salida.textContent = respuesta.status + " " + respuesta.statusText + extra + "\n\n" + bonito;
+      } catch (error) {
+        salida.className = "mal";
+        salida.textContent = "No se pudo llamar a la API.\n" + error;
+      } finally {
+        botones.forEach((b) => b.disabled = false);
+      }
+    }
+
+    document.getElementById("btn-reserva").onclick = () => llamar(
+      "btn-reserva",
+      "Reservando cupo…",
+      "/api/agenda/cupos/" + encodeURIComponent(valor("cupo")) + "/reservas",
+      { method: "POST", headers: cabeceras(), body: JSON.stringify({ pacienteId: valor("paciente") }) }
+    );
+
+    document.getElementById("btn-cierre").onclick = () => llamar(
+      "btn-cierre",
+      "Cerrando teleconsulta…",
+      "/api/teleconsulta/episodios/" + encodeURIComponent(valor("episodio")) + "/cierre",
+      { method: "POST", headers: cabeceras(), body: JSON.stringify({ cupoId: valor("cupo") }) }
+    );
+
+    document.getElementById("btn-receta").onclick = () => llamar(
+      "btn-receta",
+      "Firmando receta…",
+      "/api/recetas",
+      { method: "POST", headers: cabeceras(), body: JSON.stringify({ episodioId: valor("episodio") }) }
+    );
+
+    document.getElementById("btn-historial").onclick = () => llamar(
+      "btn-historial",
+      "Consultando historial…",
+      "/api/historial/" + encodeURIComponent(valor("paciente")),
+      { method: "GET", headers: cabeceras() }
+    );
+
+    document.getElementById("btn-sync").onclick = () => {
+      const headers = cabeceras();
+      headers["Idempotency-Key"] = "lote-" + valor("centro");
+      llamar("btn-sync", "Sincronizando cola…", "/api/sync", { method: "POST", headers, body: "{}" });
+    };
+  </script>
+</body>
+</html>
