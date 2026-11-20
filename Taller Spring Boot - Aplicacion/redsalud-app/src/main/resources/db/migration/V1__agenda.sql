@@ -1,0 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS agenda;
+CREATE TABLE agenda.cupo (
+  id VARCHAR(64) PRIMARY KEY,
+  especialista VARCHAR(120) NOT NULL,
+  reservado BOOLEAN NOT NULL,
+  version BIGINT NOT NULL
+);
