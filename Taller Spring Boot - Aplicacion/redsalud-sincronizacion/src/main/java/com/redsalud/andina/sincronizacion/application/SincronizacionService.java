@@ -1,18 +1,33 @@
 package com.redsalud.andina.sincronizacion.application;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.redsalud.andina.sincronizacion.persistence.LlaveGuardada;
+import com.redsalud.andina.sincronizacion.persistence.LlaveRepositorio;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SincronizacionService {
 
-    private final Map<String, String> procesados = new ConcurrentHashMap<>();
+    private final LlaveRepositorio llaves;
 
-    public boolean aceptar(String clave, String cuerpo) {
+    public SincronizacionService(LlaveRepositorio llaves) {
+        this.llaves = llaves;
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<LlaveGuardada> buscar(String clave) {
         if (clave == null || clave.isBlank()) {
             throw new IllegalArgumentException("falta la llave de idempotencia");
         }
-        return procesados.putIfAbsent(clave, cuerpo == null ? "" : cuerpo) == null;
+        return llaves.findById(clave);
+    }
+
+    @Transactional
+    public void guardar(String clave, int codigo, String respuesta) {
+        if (llaves.existsById(clave)) {
+            return;
+        }
+        llaves.save(new LlaveGuardada(clave, codigo, respuesta));
     }
 }

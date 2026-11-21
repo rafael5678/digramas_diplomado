@@ -1,0 +1,715 @@
+{
+  "formato": "processflow-board/v1",
+  "proyecto": {
+    "nombre_proyecto": "RedSalud Andina · Secuencia de sincronización",
+    "version": "1.0.0",
+    "notation": "uml",
+    "fecha_analisis": "2026-11-21",
+    "big_picture": {
+      "descripcion": "El centro reenvía el mismo lote a POST /api/sync. La llave vive en Sincronización. El episodio y su outbox viven en Teleconsulta. El cupo y la receta firmada no se cierran en esa cola.",
+      "hotspots": [
+        "La segunda vez, y también después de un reinicio, la API devuelve la respuesta ya guardada.",
+        "El outbox se escribe en la misma transacción que el episodio y se borra al entregarse.",
+        "Cupo y receta firmada responden 409: se confirman en el servidor."
+      ],
+      "nodos": [],
+      "aristas": [
+        {
+          "id": "seq-m1",
+          "fuente": "seq-centro",
+          "destino": "seq-api",
+          "descripcion": "lote con la llave K1",
+          "orden": 1,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m2",
+          "fuente": "seq-api",
+          "destino": "seq-sync",
+          "descripcion": "¿existe K1?",
+          "orden": 2,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m3",
+          "fuente": "seq-sync",
+          "destino": "seq-api",
+          "descripcion": "no",
+          "orden": 3,
+          "messageKind": "return",
+          "routing": "straight",
+          "dashed": true
+        },
+        {
+          "id": "seq-m4",
+          "fuente": "seq-api",
+          "destino": "seq-tele",
+          "descripcion": "guarda el episodio",
+          "orden": 4,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m5",
+          "fuente": "seq-tele",
+          "destino": "seq-outbox",
+          "descripcion": "en la misma transacción",
+          "orden": 5,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m6",
+          "fuente": "seq-api",
+          "destino": "seq-sync",
+          "descripcion": "guarda K1 y la respuesta",
+          "orden": 6,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m7",
+          "fuente": "seq-api",
+          "destino": "seq-centro",
+          "descripcion": "201",
+          "orden": 7,
+          "messageKind": "return",
+          "routing": "straight",
+          "dashed": true
+        },
+        {
+          "id": "seq-m8",
+          "fuente": "seq-despacho",
+          "destino": "seq-outbox",
+          "descripcion": "drena pendientes",
+          "orden": 8,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m9",
+          "fuente": "seq-despacho",
+          "destino": "seq-cola",
+          "descripcion": "publica la visita",
+          "orden": 9,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m10",
+          "fuente": "seq-cola",
+          "destino": "seq-auditoria",
+          "descripcion": "entrega",
+          "orden": 10,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m11",
+          "fuente": "seq-auditoria",
+          "destino": "seq-auditoria",
+          "descripcion": "dedupe por id del evento",
+          "orden": 11,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m12",
+          "fuente": "seq-centro",
+          "destino": "seq-api",
+          "descripcion": "el mismo lote, intento 2",
+          "orden": 12,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m13",
+          "fuente": "seq-api",
+          "destino": "seq-sync",
+          "descripcion": "¿existe K1?",
+          "orden": 13,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m14",
+          "fuente": "seq-sync",
+          "destino": "seq-api",
+          "descripcion": "sí, la respuesta guardada",
+          "orden": 14,
+          "messageKind": "return",
+          "routing": "straight",
+          "dashed": true
+        },
+        {
+          "id": "seq-m15",
+          "fuente": "seq-api",
+          "destino": "seq-centro",
+          "descripcion": "200, la misma respuesta",
+          "orden": 15,
+          "messageKind": "return",
+          "routing": "straight",
+          "dashed": true
+        },
+        {
+          "id": "seq-m16",
+          "fuente": "seq-centro",
+          "destino": "seq-api",
+          "descripcion": "cupo o receta firmada",
+          "orden": 16,
+          "messageKind": "sync",
+          "routing": "straight"
+        },
+        {
+          "id": "seq-m17",
+          "fuente": "seq-api",
+          "destino": "seq-centro",
+          "descripcion": "rechazo: se confirma en el servidor",
+          "orden": 17,
+          "messageKind": "return",
+          "routing": "straight",
+          "dashed": true
+        }
+      ]
+    },
+    "agregados": [
+      {
+        "id": "seq-centro",
+        "nombre_agregado": "Centro rural",
+        "entidad_raiz": "Centro rural",
+        "descripcion": "Reenvía el mismo lote cuando vuelve el enlace.",
+        "nodos": [],
+        "aristas": [],
+        "x": 80,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-api",
+        "nombre_agregado": "API",
+        "entidad_raiz": "API",
+        "descripcion": "POST /api/sync. La única puerta.",
+        "nodos": [],
+        "aristas": [],
+        "x": 400,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-sync",
+        "nombre_agregado": "Sincronización",
+        "entidad_raiz": "Sincronización",
+        "descripcion": "La llave queda en sincronizacion.llave, no en memoria.",
+        "nodos": [],
+        "aristas": [],
+        "x": 720,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-tele",
+        "nombre_agregado": "Teleconsulta",
+        "entidad_raiz": "Teleconsulta",
+        "descripcion": "Un episodio, una fila. La clave del id no se repite.",
+        "nodos": [],
+        "aristas": [],
+        "x": 1040,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-outbox",
+        "nombre_agregado": "Outbox",
+        "entidad_raiz": "Outbox",
+        "descripcion": "teleconsulta.outbox, en la misma transacción del episodio.",
+        "nodos": [],
+        "aristas": [],
+        "x": 1360,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-despacho",
+        "nombre_agregado": "Despacho",
+        "entidad_raiz": "Despacho",
+        "descripcion": "Lee lo pendiente y lo borra al entregarlo.",
+        "nodos": [],
+        "aristas": [],
+        "x": 1680,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-cola",
+        "nombre_agregado": "Cola",
+        "entidad_raiz": "Cola",
+        "descripcion": "La visita espera aquí. No es la cola de farmacia.",
+        "nodos": [],
+        "aristas": [],
+        "x": 2000,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-auditoria",
+        "nombre_agregado": "Auditoría",
+        "entidad_raiz": "Auditoría",
+        "descripcion": "Anota la entrega y, si chocan dos valores, guarda los dos.",
+        "nodos": [],
+        "aristas": [],
+        "x": 2320,
+        "y": 0,
+        "width": 200,
+        "height": 1120,
+        "tipo_contenedor": "Línea de Vida",
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-reintento",
+        "nombre_agregado": "opt",
+        "entidad_raiz": "opt",
+        "descripcion": "Corte de red o reinicio: la misma llave, la misma respuesta.",
+        "nodos": [],
+        "aristas": [],
+        "x": 56,
+        "y": 708,
+        "width": 888,
+        "height": 236,
+        "tipo_contenedor": "Fragmento",
+        "fragmentOp": "opt",
+        "fragmentParts": [
+          {
+            "guarda": "la llave ya está guardada",
+            "desde": 12,
+            "hasta": 15
+          }
+        ],
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      },
+      {
+        "id": "seq-fuerte",
+        "nombre_agregado": "opt",
+        "entidad_raiz": "opt",
+        "descripcion": "Cupo y receta firmada no se cierran en el centro.",
+        "nodos": [],
+        "aristas": [],
+        "x": 56,
+        "y": 948,
+        "width": 568,
+        "height": 116,
+        "tipo_contenedor": "Fragmento",
+        "fragmentOp": "opt",
+        "fragmentParts": [
+          {
+            "guarda": "cupo o receta firmada",
+            "desde": 16,
+            "hasta": 17
+          }
+        ],
+        "estado_comparativo": "nuevo",
+        "fuente": "RedSalud Andina · sincronización del centro"
+      }
+    ],
+    "read_models": [],
+    "politicas_inter_agregados": [],
+    "responsables": [],
+    "notas": "Secuencia de la cola del centro, con los módulos que ya existen. No hay balanceador: la API es la única puerta. No hay Aurora aparte: la llave está en sincronizacion.llave y el episodio en teleconsulta.episodio. La cola de esta secuencia es la de la visita, distinta de la cola de farmacia. La métrica del caso sigue siendo subir el lote al volver el enlace, sin perderlo y sin duplicarlo.",
+    "transcript": ""
+  },
+  "vistas": {
+    "customViews": [
+      {
+        "id": "seq00001-2222-4aaa-8aaa-0000000000b1",
+        "name": "Sincronización · secuencia",
+        "kind": "graph",
+        "notation": "uml",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · Secuencia de sincronización",
+          "version": "1.0.0",
+          "notation": "uml",
+          "fecha_analisis": "2026-11-21",
+          "big_picture": {
+            "descripcion": "El centro reenvía el mismo lote a POST /api/sync. La llave vive en Sincronización. El episodio y su outbox viven en Teleconsulta. El cupo y la receta firmada no se cierran en esa cola.",
+            "hotspots": [
+              "La segunda vez, y también después de un reinicio, la API devuelve la respuesta ya guardada.",
+              "El outbox se escribe en la misma transacción que el episodio y se borra al entregarse.",
+              "Cupo y receta firmada responden 409: se confirman en el servidor."
+            ],
+            "nodos": [],
+            "aristas": [
+              {
+                "id": "seq-m1",
+                "fuente": "seq-centro",
+                "destino": "seq-api",
+                "descripcion": "lote con la llave K1",
+                "orden": 1,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m2",
+                "fuente": "seq-api",
+                "destino": "seq-sync",
+                "descripcion": "¿existe K1?",
+                "orden": 2,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m3",
+                "fuente": "seq-sync",
+                "destino": "seq-api",
+                "descripcion": "no",
+                "orden": 3,
+                "messageKind": "return",
+                "routing": "straight",
+                "dashed": true
+              },
+              {
+                "id": "seq-m4",
+                "fuente": "seq-api",
+                "destino": "seq-tele",
+                "descripcion": "guarda el episodio",
+                "orden": 4,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m5",
+                "fuente": "seq-tele",
+                "destino": "seq-outbox",
+                "descripcion": "en la misma transacción",
+                "orden": 5,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m6",
+                "fuente": "seq-api",
+                "destino": "seq-sync",
+                "descripcion": "guarda K1 y la respuesta",
+                "orden": 6,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m7",
+                "fuente": "seq-api",
+                "destino": "seq-centro",
+                "descripcion": "201",
+                "orden": 7,
+                "messageKind": "return",
+                "routing": "straight",
+                "dashed": true
+              },
+              {
+                "id": "seq-m8",
+                "fuente": "seq-despacho",
+                "destino": "seq-outbox",
+                "descripcion": "drena pendientes",
+                "orden": 8,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m9",
+                "fuente": "seq-despacho",
+                "destino": "seq-cola",
+                "descripcion": "publica la visita",
+                "orden": 9,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m10",
+                "fuente": "seq-cola",
+                "destino": "seq-auditoria",
+                "descripcion": "entrega",
+                "orden": 10,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m11",
+                "fuente": "seq-auditoria",
+                "destino": "seq-auditoria",
+                "descripcion": "dedupe por id del evento",
+                "orden": 11,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m12",
+                "fuente": "seq-centro",
+                "destino": "seq-api",
+                "descripcion": "el mismo lote, intento 2",
+                "orden": 12,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m13",
+                "fuente": "seq-api",
+                "destino": "seq-sync",
+                "descripcion": "¿existe K1?",
+                "orden": 13,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m14",
+                "fuente": "seq-sync",
+                "destino": "seq-api",
+                "descripcion": "sí, la respuesta guardada",
+                "orden": 14,
+                "messageKind": "return",
+                "routing": "straight",
+                "dashed": true
+              },
+              {
+                "id": "seq-m15",
+                "fuente": "seq-api",
+                "destino": "seq-centro",
+                "descripcion": "200, la misma respuesta",
+                "orden": 15,
+                "messageKind": "return",
+                "routing": "straight",
+                "dashed": true
+              },
+              {
+                "id": "seq-m16",
+                "fuente": "seq-centro",
+                "destino": "seq-api",
+                "descripcion": "cupo o receta firmada",
+                "orden": 16,
+                "messageKind": "sync",
+                "routing": "straight"
+              },
+              {
+                "id": "seq-m17",
+                "fuente": "seq-api",
+                "destino": "seq-centro",
+                "descripcion": "rechazo: se confirma en el servidor",
+                "orden": 17,
+                "messageKind": "return",
+                "routing": "straight",
+                "dashed": true
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "id": "seq-centro",
+              "nombre_agregado": "Centro rural",
+              "entidad_raiz": "Centro rural",
+              "descripcion": "Reenvía el mismo lote cuando vuelve el enlace.",
+              "nodos": [],
+              "aristas": [],
+              "x": 80,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-api",
+              "nombre_agregado": "API",
+              "entidad_raiz": "API",
+              "descripcion": "POST /api/sync. La única puerta.",
+              "nodos": [],
+              "aristas": [],
+              "x": 400,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-sync",
+              "nombre_agregado": "Sincronización",
+              "entidad_raiz": "Sincronización",
+              "descripcion": "La llave queda en sincronizacion.llave, no en memoria.",
+              "nodos": [],
+              "aristas": [],
+              "x": 720,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-tele",
+              "nombre_agregado": "Teleconsulta",
+              "entidad_raiz": "Teleconsulta",
+              "descripcion": "Un episodio, una fila. La clave del id no se repite.",
+              "nodos": [],
+              "aristas": [],
+              "x": 1040,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-outbox",
+              "nombre_agregado": "Outbox",
+              "entidad_raiz": "Outbox",
+              "descripcion": "teleconsulta.outbox, en la misma transacción del episodio.",
+              "nodos": [],
+              "aristas": [],
+              "x": 1360,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-despacho",
+              "nombre_agregado": "Despacho",
+              "entidad_raiz": "Despacho",
+              "descripcion": "Lee lo pendiente y lo borra al entregarlo.",
+              "nodos": [],
+              "aristas": [],
+              "x": 1680,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-cola",
+              "nombre_agregado": "Cola",
+              "entidad_raiz": "Cola",
+              "descripcion": "La visita espera aquí. No es la cola de farmacia.",
+              "nodos": [],
+              "aristas": [],
+              "x": 2000,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-auditoria",
+              "nombre_agregado": "Auditoría",
+              "entidad_raiz": "Auditoría",
+              "descripcion": "Anota la entrega y, si chocan dos valores, guarda los dos.",
+              "nodos": [],
+              "aristas": [],
+              "x": 2320,
+              "y": 0,
+              "width": 200,
+              "height": 1120,
+              "tipo_contenedor": "Línea de Vida",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-reintento",
+              "nombre_agregado": "opt",
+              "entidad_raiz": "opt",
+              "descripcion": "Corte de red o reinicio: la misma llave, la misma respuesta.",
+              "nodos": [],
+              "aristas": [],
+              "x": 56,
+              "y": 708,
+              "width": 888,
+              "height": 236,
+              "tipo_contenedor": "Fragmento",
+              "fragmentOp": "opt",
+              "fragmentParts": [
+                {
+                  "guarda": "la llave ya está guardada",
+                  "desde": 12,
+                  "hasta": 15
+                }
+              ],
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            },
+            {
+              "id": "seq-fuerte",
+              "nombre_agregado": "opt",
+              "entidad_raiz": "opt",
+              "descripcion": "Cupo y receta firmada no se cierran en el centro.",
+              "nodos": [],
+              "aristas": [],
+              "x": 56,
+              "y": 948,
+              "width": 568,
+              "height": 116,
+              "tipo_contenedor": "Fragmento",
+              "fragmentOp": "opt",
+              "fragmentParts": [
+                {
+                  "guarda": "cupo o receta firmada",
+                  "desde": 16,
+                  "hasta": 17
+                }
+              ],
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sincronización del centro"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [],
+          "notas": "Secuencia de la cola del centro, con los módulos que ya existen. No hay balanceador: la API es la única puerta. No hay Aurora aparte: la llave está en sincronizacion.llave y el episodio en teleconsulta.episodio. La cola de esta secuencia es la de la visita, distinta de la cola de farmacia. La métrica del caso sigue siendo subir el lote al volver el enlace, sin perderlo y sin duplicarlo.",
+          "transcript": ""
+        },
+        "createdAt": "2026-11-21T14:00:00.000Z"
+      }
+    ],
+    "activeViewId": "seq00001-2222-4aaa-8aaa-0000000000b1",
+    "injectedViewIds": [],
+    "openViewIds": [
+      "seq00001-2222-4aaa-8aaa-0000000000b1"
+    ]
+  }
+}

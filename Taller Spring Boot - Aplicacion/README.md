@@ -18,6 +18,8 @@ Historial es la frontera con el legado: puerto `HistorialClinicoPort`, traducci�
 
 La receta firmada no sale directo a farmacia. Se escribe en `receta.outbox` en la misma transacción y un despacho la entrega a la cola. Cuando la cola la recibe, la fila se borra: el outbox solo transporta.
 
+`POST /api/sync` guarda la visita del centro. La llave queda en la tabla `sincronizacion.llave`, no en memoria: el mismo lote responde 201 la primera vez y 200 con la misma respuesta después, aunque el proceso haya reiniciado. El episodio entra en Teleconsulta y el evento sale por `teleconsulta.outbox`. El cupo y la receta firmada no se confirman en esa cola.
+
 ## Cómo correrlo
 
 Hace falta Java 21.

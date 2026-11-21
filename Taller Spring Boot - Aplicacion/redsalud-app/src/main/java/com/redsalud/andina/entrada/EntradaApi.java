@@ -7,9 +7,12 @@ import com.redsalud.andina.historial.api.HistorialConsulta;
 import com.redsalud.andina.historial.application.AdaptadorHistorial;
 import com.redsalud.andina.receta.application.RecetaService;
 import com.redsalud.andina.sincronizacion.application.SincronizacionService;
+import com.redsalud.andina.sincronizacion.persistence.LlaveGuardada;
 import com.redsalud.andina.teleconsulta.application.TeleconsultaService;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,10 +71,43 @@ public class EntradaApi {
     }
 
     @PostMapping("/sync")
-    public Map<String, Object> sincronizar(@RequestHeader("Idempotency-Key") String clave,
-                                           @RequestBody(required = false) String cuerpo) {
-        boolean primeraVez = sincronizacion.aceptar(clave, cuerpo);
-        return Map.of("aceptado", true, "primeraVez", primeraVez);
+    @Transactional
+    public ResponseEntity<String> sincronizar(@RequestHeader("Idempotency-Key") String clave,
+                                              @RequestBody(required = false) String cuerpo) {
+        Optional<LlaveGuardada> previa = sincronizacion.buscar(clave);
+        if (previa.isPresent()) {
+            return ResponseEntity.ok(previa.get().getRespuesta());
+        }
+        String tipo = campo(cuerpo, "tipo");
+        if ("cupo".equals(tipo) || "receta".equals(tipo)) {
+            return ResponseEntity.status(409).body("{\"error\":\"el cupo y la receta firmada se confirman en el servidor\"}");
+        }
+        String episodioId = campo(cuerpo, "episodioId");
+        if (episodioId.isBlank()) {
+            episodioId = clave;
+        }
+        String cupoId = campo(cuerpo, "cupoId");
+        if (cupoId.isBlank()) {
+            cupoId = "sin-cupo";
+        }
+        teleconsulta.registrar(episodioId, cupoId);
+        String respuesta = "{\"episodioId\":\"" + episodioId + "\",\"estado\":\"sincronizado\"}";
+        sincronizacion.guardar(clave, 201, respuesta);
+        return ResponseEntity.status(201).body(respuesta);
+    }
+
+    private String campo(String json, String nombre) {
+        if (json == null) {
+            return "";
+        }
+        String marca = "\"" + nombre + "\":\"";
+        int inicio = json.indexOf(marca);
+        if (inicio < 0) {
+            return "";
+        }
+        int desde = inicio + marca.length();
+        int hasta = json.indexOf('"', desde);
+        return hasta < 0 ? "" : json.substring(desde, hasta);
     }
 
     @GetMapping("/historial/{pacienteId}")

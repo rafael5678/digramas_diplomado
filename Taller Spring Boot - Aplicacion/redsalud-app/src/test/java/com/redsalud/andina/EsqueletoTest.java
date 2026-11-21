@@ -7,6 +7,10 @@ import com.redsalud.andina.historial.adapter.LegadoSoapSimulado;
 import com.redsalud.andina.interconsulta.application.InterconsultaService;
 import com.redsalud.andina.receta.application.ColaFarmacia;
 import com.redsalud.andina.receta.application.DespachoOutbox;
+import com.redsalud.andina.teleconsulta.application.ConsumidorVisitas;
+import com.redsalud.andina.teleconsulta.application.DespachoVisitas;
+import com.redsalud.andina.teleconsulta.persistence.EpisodioRepositorio;
+import org.springframework.web.client.HttpClientErrorException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +42,15 @@ class EsqueletoTest {
     @Autowired
     ColaFarmacia farmacia;
 
+    @Autowired
+    EpisodioRepositorio episodios;
+
+    @Autowired
+    DespachoVisitas despachoVisitas;
+
+    @Autowired
+    ConsumidorVisitas consumidor;
+
     @Test
     void reservarUnCupoPasaLaInterconsultaAAgendada() {
         post("/api/agenda/cupos/cupo-1/reservas", "{\"pacienteId\":\"p-1\"}");
@@ -64,14 +77,50 @@ class EsqueletoTest {
 
     @Test
     void elMismoEnvioDeLaColaNoSeProcesaDosVeces() {
+        long antes = episodios.count();
         HttpHeaders headers = headers();
         headers.set("Idempotency-Key", "lote-1");
         RestTemplate http = new RestTemplate();
         String url = "http://localhost:" + puerto + "/api/sync";
         ResponseEntity<String> primera = http.exchange(url, HttpMethod.POST, new HttpEntity<>("{}", headers), String.class);
         ResponseEntity<String> segunda = http.exchange(url, HttpMethod.POST, new HttpEntity<>("{}", headers), String.class);
-        assertThat(primera.getBody()).contains("\"primeraVez\":true");
-        assertThat(segunda.getBody()).contains("\"primeraVez\":false");
+        assertThat(primera.getStatusCode().value()).isEqualTo(201);
+        assertThat(segunda.getStatusCode().value()).isEqualTo(200);
+        assertThat(segunda.getBody()).isEqualTo(primera.getBody());
+        assertThat(episodios.count()).isEqualTo(antes + 1);
+        assertThat(despachoVisitas.despachar()).isPositive();
+        consumidor.drenar();
+        assertThat(consumidor.aplicar("lote-1|lote-1")).isFalse();
+    }
+
+    @Test
+    void unEpisodioRepetidoGuardaLosDosValoresEnAuditoria() {
+        enviar("visita-1", "{\"episodioId\":\"ep-visita\",\"cupoId\":\"c-1\"}");
+        enviar("visita-2", "{\"episodioId\":\"ep-visita\",\"cupoId\":\"c-2\"}");
+        assertThat(auditoria.conflictos())
+                .anyMatch(conflicto -> conflicto.guardado().equals("c-1") && conflicto.llegado().equals("c-2"));
+    }
+
+    @Test
+    void elCupoYLaRecetaNoSeConfirmanEnLaCola() {
+        HttpHeaders headers = headers();
+        headers.set("Idempotency-Key", "lote-fuerte");
+        RestTemplate http = new RestTemplate();
+        String url = "http://localhost:" + puerto + "/api/sync";
+        try {
+            http.exchange(url, HttpMethod.POST, new HttpEntity<>("{\"tipo\":\"receta\"}", headers), String.class);
+        } catch (HttpClientErrorException ex) {
+            assertThat(ex.getStatusCode().value()).isEqualTo(409);
+            assertThat(ex.getResponseBodyAsString()).contains("se confirman en el servidor");
+            return;
+        }
+        throw new AssertionError("la cola aceptó un dato de consistencia fuerte");
+    }
+
+    private void enviar(String clave, String cuerpo) {
+        HttpHeaders headers = headers();
+        headers.set("Idempotency-Key", clave);
+        new RestTemplate().exchange("http://localhost:" + puerto + "/api/sync", HttpMethod.POST, new HttpEntity<>(cuerpo, headers), String.class);
     }
 
     private void post(String ruta, String cuerpo) {
