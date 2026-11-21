@@ -695,9 +695,9 @@
           },
           {
             "id": "mod-acl",
-            "nombre": "Historial",
+            "nombre": "Historial · ACL",
             "tipo_elemento": "Componente",
-            "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
+            "descripcion": "RF-06 · ACL. HistorialClinicoPort y copia con frescura.",
             "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
             "metadata": [
               {
@@ -1721,9 +1721,9 @@
                 },
                 {
                   "id": "mod-acl",
-                  "nombre": "Historial",
+                  "nombre": "Historial · ACL",
                   "tipo_elemento": "Componente",
-                  "descripcion": "RF-06 · adaptador SOAP; read model con frescura",
+                  "descripcion": "RF-06 · ACL. HistorialClinicoPort y copia con frescura.",
                   "fuente": "RedSalud Andina · caso y taller Java/Spring Boot",
                   "metadata": [
                     {
@@ -2046,12 +2046,515 @@
           "transcript": ""
         },
         "createdAt": "2026-11-14T15:45:00.000Z"
+      },
+      {
+        "id": "c4acl001-2222-4aaa-8aaa-0000000000a1",
+        "name": "ACL",
+        "kind": "graph",
+        "notation": "c4",
+        "graph": {
+          "nombre_proyecto": "RedSalud Andina · ACL del legado",
+          "version": "1.0.0",
+          "notation": "c4",
+          "fecha_analisis": "2026-11-20",
+          "big_picture": {
+            "descripcion": "La ACL es Historial. La interfaz es HistorialClinicoPort: consultar(pacienteId) devuelve HistorialConsulta. Afuera no hay tipos SOAP.",
+            "hotspots": [
+              "La interfaz HistorialClinicoPort vive en la ACL. Nadie de afuera habla SOAP.",
+              "consultar(String pacienteId) devuelve HistorialConsulta: resumen y frescura.",
+              "Si el legado no responde, la API sigue en 200 con VENCIDO. No hay 500."
+            ],
+            "nodos": [],
+            "aristas": [
+              {
+                "fuente": "acl-api",
+                "destino": "acl-puerto",
+                "descripcion": "resumen y frescura",
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 1,
+                  "y": 0.5
+                },
+                "targetAnchor": {
+                  "x": 0,
+                  "y": 0.5
+                },
+                "midpoints": [
+                  {
+                    "x": 478,
+                    "y": 188
+                  },
+                  {
+                    "x": 478,
+                    "y": 208
+                  }
+                ]
+              },
+              {
+                "fuente": "acl-tele",
+                "destino": "acl-puerto",
+                "descripcion": "historial por puerto",
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 1,
+                  "y": 0.5
+                },
+                "targetAnchor": {
+                  "x": 0,
+                  "y": 0.5
+                },
+                "midpoints": [
+                  {
+                    "x": 478,
+                    "y": 488
+                  },
+                  {
+                    "x": 478,
+                    "y": 208
+                  }
+                ]
+              },
+              {
+                "fuente": "acl-cliente",
+                "destino": "acl-legado",
+                "descripcion": "SOAP, solo lectura",
+                "routing": "orthogonal",
+                "sourceAnchor": {
+                  "x": 1,
+                  "y": 0.5
+                },
+                "targetAnchor": {
+                  "x": 0,
+                  "y": 0.5
+                }
+              },
+              {
+                "fuente": "acl-adaptador",
+                "destino": "acl-auditoria",
+                "descripcion": "AccesoClinico",
+                "routing": "orthogonal",
+                "dashed": true,
+                "sourceAnchor": {
+                  "x": 0,
+                  "y": 0.5
+                },
+                "targetAnchor": {
+                  "x": 0.5,
+                  "y": 0
+                },
+                "midpoints": [
+                  {
+                    "x": 945,
+                    "y": 208
+                  },
+                  {
+                    "x": 945,
+                    "y": 830
+                  },
+                  {
+                    "x": 715,
+                    "y": 830
+                  }
+                ]
+              }
+            ]
+          },
+          "agregados": [
+            {
+              "nombre_agregado": "Quien consulta",
+              "entidad_raiz": "Quien consulta",
+              "descripcion": "Solo ven el modelo nuestro: un resumen y su frescura. No conocen el SOAP.",
+              "nodos": [
+                {
+                  "id": "acl-api",
+                  "nombre": "API",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "GET /historial/{id}. Escribe X-Data-Freshness.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.api",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "cabecera de frescura",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "HTTPS"
+                  ],
+                  "x": 100,
+                  "y": 130,
+                  "width": 250,
+                  "height": 116
+                },
+                {
+                  "id": "acl-tele",
+                  "nombre": "Teleconsulta",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Pide la historia vieja solo por el puerto.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.teleconsulta",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "referencia al paciente",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [],
+                  "x": 100,
+                  "y": 430,
+                  "width": 250,
+                  "height": 116
+                }
+              ],
+              "aristas": [],
+              "x": 36,
+              "y": 40,
+              "width": 400,
+              "height": 620,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sesión 2, capa anticorrupción"
+            },
+            {
+              "nombre_agregado": "ACL · Historial",
+              "entidad_raiz": "ACL · Historial",
+              "descripcion": "Capa anticorrupción. La interfaz no deja pasar tipos del legado.",
+              "nodos": [
+                {
+                  "id": "acl-puerto",
+                  "nombre": "HistorialClinicoPort",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "consultar(String pacienteId): HistorialConsulta",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial.api",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "interfaz",
+                      "valor": "HistorialConsulta consultar(String pacienteId)",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "interfaz"
+                  ],
+                  "x": 600,
+                  "y": 150,
+                  "width": 250,
+                  "height": 116
+                },
+                {
+                  "id": "acl-adaptador",
+                  "nombre": "Adaptador",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Vigente: FRESCO. Legado caído: VENCIDO. Nunca 500.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial.application",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "frescura",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "Adaptador"
+                  ],
+                  "x": 1040,
+                  "y": 150,
+                  "width": 250,
+                  "height": 116
+                },
+                {
+                  "id": "acl-traduccion",
+                  "nombre": "Traducción",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Parte id|resumen. Un formato inválido no entra.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial.adapter",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "resumen canónico",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [],
+                  "x": 1480,
+                  "y": 150,
+                  "width": 250,
+                  "height": 116
+                },
+                {
+                  "id": "acl-cliente",
+                  "nombre": "Cliente SOAP",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "El único que habla el protocolo del legado.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial.adapter",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "línea cruda",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "SOAP"
+                  ],
+                  "x": 1920,
+                  "y": 150,
+                  "width": 250,
+                  "height": 116
+                },
+                {
+                  "id": "acl-copia",
+                  "nombre": "Copia de lectura",
+                  "tipo_elemento": "Base de Datos",
+                  "descripcion": "Paciente, resumen y fresca_hasta. Vale 12 horas.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.historial.persistence",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "esquema historial",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "JPA"
+                  ],
+                  "x": 1040,
+                  "y": 500,
+                  "width": 250,
+                  "height": 116
+                }
+              ],
+              "aristas": [
+                {
+                  "fuente": "acl-puerto",
+                  "destino": "acl-adaptador",
+                  "descripcion": "nuestro modelo",
+                  "routing": "orthogonal",
+                  "sourceAnchor": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "targetAnchor": {
+                    "x": 0,
+                    "y": 0.5
+                  }
+                },
+                {
+                  "fuente": "acl-adaptador",
+                  "destino": "acl-copia",
+                  "descripcion": "FRESCO",
+                  "routing": "orthogonal",
+                  "sourceAnchor": {
+                    "x": 0.5,
+                    "y": 1
+                  },
+                  "targetAnchor": {
+                    "x": 0.5,
+                    "y": 0
+                  }
+                },
+                {
+                  "fuente": "acl-adaptador",
+                  "destino": "acl-traduccion",
+                  "descripcion": "si venció",
+                  "routing": "orthogonal",
+                  "sourceAnchor": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "targetAnchor": {
+                    "x": 0,
+                    "y": 0.5
+                  }
+                },
+                {
+                  "fuente": "acl-traduccion",
+                  "destino": "acl-cliente",
+                  "descripcion": "línea cruda",
+                  "routing": "orthogonal",
+                  "sourceAnchor": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "targetAnchor": {
+                    "x": 0,
+                    "y": 0.5
+                  }
+                },
+                {
+                  "fuente": "acl-traduccion",
+                  "destino": "acl-copia",
+                  "descripcion": "guarda la copia",
+                  "routing": "orthogonal",
+                  "sourceAnchor": {
+                    "x": 0.5,
+                    "y": 1
+                  },
+                  "targetAnchor": {
+                    "x": 0.5,
+                    "y": 0
+                  },
+                  "midpoints": [
+                    {
+                      "x": 1605,
+                      "y": 390
+                    },
+                    {
+                      "x": 1165,
+                      "y": 390
+                    }
+                  ]
+                }
+              ],
+              "x": 520,
+              "y": 40,
+              "width": 1760,
+              "height": 720,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sesión 2, capa anticorrupción"
+            },
+            {
+              "nombre_agregado": "Legado clínico",
+              "entidad_raiz": "Legado clínico",
+              "descripcion": "El sistema viejo de los centros. No se modifica y solo deja leer.",
+              "nodos": [
+                {
+                  "id": "acl-legado",
+                  "nombre": "Legado clínico",
+                  "tipo_elemento": "Sistema Externo",
+                  "descripcion": "SOAP de noche, solo lectura. Su texto no sale de aquí.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "legado",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "id|resumen",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "SOAP"
+                  ],
+                  "x": 2440,
+                  "y": 150,
+                  "width": 250,
+                  "height": 116
+                }
+              ],
+              "aristas": [],
+              "x": 2360,
+              "y": 110,
+              "width": 420,
+              "height": 280,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sesión 2, capa anticorrupción"
+            },
+            {
+              "nombre_agregado": "Auditoría",
+              "entidad_raiz": "Auditoría",
+              "descripcion": "Historial avisa quién leyó. La auditoría no guarda el resumen clínico.",
+              "nodos": [
+                {
+                  "id": "acl-auditoria",
+                  "nombre": "Auditoría",
+                  "tipo_elemento": "Componente",
+                  "descripcion": "Guarda AccesoClinico. No abre la copia del legado.",
+                  "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
+                  "metadata": [
+                    {
+                      "clave": "paquete",
+                      "valor": "com.redsalud.andina.auditoria",
+                      "tipo": "texto"
+                    },
+                    {
+                      "clave": "dato",
+                      "valor": "quién leyó",
+                      "tipo": "texto"
+                    }
+                  ],
+                  "estado_comparativo": "nuevo",
+                  "tags_tecnologia": [
+                    "append-only"
+                  ],
+                  "x": 590,
+                  "y": 980,
+                  "width": 250,
+                  "height": 116
+                }
+              ],
+              "aristas": [],
+              "x": 520,
+              "y": 900,
+              "width": 420,
+              "height": 280,
+              "tipo_contenedor": "Límite de Sistema",
+              "estado_comparativo": "nuevo",
+              "fuente": "RedSalud Andina · sesión 2, capa anticorrupción"
+            }
+          ],
+          "read_models": [],
+          "politicas_inter_agregados": [],
+          "responsables": [],
+          "notas": "ACL de Historial, sesión 2. La interfaz es HistorialClinicoPort.consultar(String pacienteId): HistorialConsulta. Vocabulario nuestro, cero tipos SOAP. FRESCO: la copia sigue vigente. LEGADO: se acaba de traducir el SOAP. VENCIDO: el legado no respondió y se entrega la última copia, o «sin copia disponible». La cabecera es X-Data-Freshness. Cambiar el proveedor del legado toca solo el paquete historial.",
+          "transcript": ""
+        },
+        "createdAt": "2026-11-20T19:30:00.000Z"
       }
     ],
     "activeViewId": "c4d5e6f7-2222-4aaa-8aaa-000000000022",
     "injectedViewIds": [],
     "openViewIds": [
-      "c4d5e6f7-2222-4aaa-8aaa-000000000022"
+      "c4d5e6f7-2222-4aaa-8aaa-000000000022",
+      "c4acl001-2222-4aaa-8aaa-0000000000a1"
     ]
   }
 }
