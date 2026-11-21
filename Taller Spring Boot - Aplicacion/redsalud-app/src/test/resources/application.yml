@@ -1,0 +1,3 @@
+redsalud:
+  outbox:
+    pausa: 3600000
