@@ -2263,7 +2263,7 @@
                   "id": "acl-adaptador",
                   "nombre": "Adaptador",
                   "tipo_elemento": "Componente",
-                  "descripcion": "Vigente: FRESCO. Legado caído: VENCIDO. Nunca 500.",
+                  "descripcion": "Timeout 2 s y circuito. Caída: VENCIDO. Nunca 500.",
                   "fuente": "RedSalud Andina · sesión 2, capa anticorrupción",
                   "metadata": [
                     {
