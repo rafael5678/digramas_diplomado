@@ -14,7 +14,7 @@ Un solo proceso. Nueve módulos de negocio y una API que es la única entrada. E
 | Auditoría | Quién vio un documento |
 | Reportes | Las cifras, a partir de eventos |
 
-Historial es la frontera con el legado: puerto `HistorialClinicoPort`, traducción al modelo nuestro y degradación. Si el SOAP no responde, la API sigue contestando con la última copia y la cabecera `X-Data-Freshness`.
+Historial es la frontera con el legado: puerto `HistorialClinicoPort`, traducción al modelo nuestro y degradación. La llamada al SOAP espera como máximo 2 segundos y, tras tres fallos, el circuito deja de llamarlo. Si el SOAP no responde, la API sigue contestando con la última copia y la cabecera `X-Data-Freshness`.
 
 ## Cómo correrlo
 
