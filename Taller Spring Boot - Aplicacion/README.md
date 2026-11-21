@@ -16,6 +16,8 @@ Un solo proceso. Nueve módulos de negocio y una API que es la única entrada. E
 
 Historial es la frontera con el legado: puerto `HistorialClinicoPort`, traducción al modelo nuestro y degradación. La llamada al SOAP espera como máximo 2 segundos y, tras tres fallos, el circuito deja de llamarlo. Si el SOAP no responde, la API sigue contestando con la última copia y la cabecera `X-Data-Freshness`.
 
+La receta firmada no sale directo a farmacia. Se escribe en `receta.outbox` en la misma transacción y un despacho la entrega a la cola. Cuando la cola la recibe, la fila se borra: el outbox solo transporta.
+
 ## Cómo correrlo
 
 Hace falta Java 21.
