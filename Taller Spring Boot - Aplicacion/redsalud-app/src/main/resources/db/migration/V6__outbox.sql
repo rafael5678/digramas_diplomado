@@ -1,0 +1,7 @@
+CREATE TABLE receta.outbox (
+  id VARCHAR(64) PRIMARY KEY,
+  tipo VARCHAR(64) NOT NULL,
+  cuerpo VARCHAR(2000) NOT NULL,
+  estado VARCHAR(32) NOT NULL,
+  creado_en TIMESTAMP NOT NULL
+);
