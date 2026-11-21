@@ -2,7 +2,7 @@ package com.redsalud.andina.historial.application;
 
 import com.redsalud.andina.comun.AccesoClinico;
 import com.redsalud.andina.comun.Actor;
-import com.redsalud.andina.historial.adapter.LegadoCliente;
+import com.redsalud.andina.historial.adapter.ProteccionLegado;
 import com.redsalud.andina.historial.adapter.TraduccionLegado;
 import com.redsalud.andina.historial.api.HistorialClinicoPort;
 import com.redsalud.andina.historial.api.HistorialConsulta;
@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdaptadorHistorial implements HistorialClinicoPort {
 
     private final HistorialRepositorio copias;
-    private final LegadoCliente legado;
+    private final ProteccionLegado legado;
     private final ApplicationEventPublisher eventos;
 
-    public AdaptadorHistorial(HistorialRepositorio copias, LegadoCliente legado, ApplicationEventPublisher eventos) {
+    public AdaptadorHistorial(HistorialRepositorio copias, ProteccionLegado legado, ApplicationEventPublisher eventos) {
         this.copias = copias;
         this.legado = legado;
         this.eventos = eventos;
