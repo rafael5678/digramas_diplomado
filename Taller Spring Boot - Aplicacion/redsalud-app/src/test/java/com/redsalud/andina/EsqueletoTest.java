@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.redsalud.andina.auditoria.application.AuditoriaService;
 import com.redsalud.andina.historial.adapter.LegadoSoapSimulado;
 import com.redsalud.andina.interconsulta.application.InterconsultaService;
+import com.redsalud.andina.receta.application.ColaFarmacia;
+import com.redsalud.andina.receta.application.DespachoOutbox;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +32,12 @@ class EsqueletoTest {
     @Autowired
     LegadoSoapSimulado legado;
 
+    @Autowired
+    DespachoOutbox despacho;
+
+    @Autowired
+    ColaFarmacia farmacia;
+
     @Test
     void reservarUnCupoPasaLaInterconsultaAAgendada() {
         post("/api/agenda/cupos/cupo-1/reservas", "{\"pacienteId\":\"p-1\"}");
@@ -44,6 +52,14 @@ class EsqueletoTest {
         assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
         assertThat(respuesta.getHeaders().getFirst("X-Data-Freshness")).isEqualTo("VENCIDO");
         assertThat(respuesta.getBody()).contains("sin copia disponible");
+    }
+
+    @Test
+    void laRecetaFirmadaSalePorElOutboxYSeBorra() {
+        intercambio("/api/recetas", HttpMethod.POST, "{\"episodioId\":\"ep-1\"}");
+        assertThat(despacho.despachar()).isEqualTo(1);
+        assertThat(farmacia.mensajes()).anyMatch(mensaje -> mensaje.endsWith("|ep-1"));
+        assertThat(despacho.despachar()).isZero();
     }
 
     @Test
