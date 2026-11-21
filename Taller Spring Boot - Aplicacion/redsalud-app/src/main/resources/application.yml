@@ -10,3 +10,7 @@ spring:
       ddl-auto: validate
   flyway:
     enabled: true
+
+redsalud:
+  outbox:
+    pausa: 5000
